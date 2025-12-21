@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import FormTable from './form-table';
-import { FormTableConfig } from './form-table';
+import { FormTable, FormTableConfig } from '@dspackages/form-table';
+import '@dspackages/form-table/dist/index.css';
 import * as yup from 'yup';
-import './form-table/index.css';
 import './App.css';
 
 function App() {

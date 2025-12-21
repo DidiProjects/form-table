@@ -17,14 +17,14 @@ Um gerenciador de formulário para tabelas com células editáveis, navegação 
 ## 🚀 Instalação
 
 ```bash
-npm install @DidiProjects/form-table yup
+npm install @dspackages/form-table yup
 ```
 
 ## 📖 Uso Básico
 
 ```tsx
 import React from 'react';
-import FormTable, { FormTableConfig } from '@DidiProjects/form-table';
+import FormTable, { FormTableConfig } from '@dspackages/form-table';
 import * as yup from 'yup';
 
 const config: FormTableConfig = {
@@ -159,7 +159,7 @@ O componente vem com estilos padrão que podem ser customizados:
 ### Hooks
 
 ```tsx
-import { useFormTable, useFormTableCell } from '@DidiProjects/form-table';
+import { useFormTable, useFormTableCell } from '@dspackages/form-table';
 
 // Hook principal (usar dentro do FormTableProvider)
 const {

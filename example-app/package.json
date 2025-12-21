@@ -1,9 +1,9 @@
 {
-  "name": "highlight-text-example",
+  "name": "form-table-example",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dspackages/highlight-text": "file:..",
+    "@dspackages/form-table": "file:..",
     "@types/node": "^16.18.0",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",

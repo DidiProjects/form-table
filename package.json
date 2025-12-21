@@ -1,5 +1,5 @@
 {
-  "name": "@DidiProjects/form-table",
+  "name": "@dspackages/form-table",
   "version": "1.0.0",
   "description": "Gerenciador de formulário para tabelas com células editáveis, navegação por Tab, validação Yup e contexto",
   "main": "dist/index.js",
