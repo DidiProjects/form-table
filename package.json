@@ -1,7 +1,7 @@
 {
-  "name": "@your-scope/your-component-name",
+  "name": "@DidiProjects/form-table",
   "version": "1.0.0",
-  "description": "Your React component description goes here",
+  "description": "Gerenciador de formulário para tabelas com células editáveis, navegação por Tab, validação Yup e contexto",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -30,10 +30,13 @@
   },
   "keywords": [
     "react",
-    "component",
+    "table",
+    "form",
+    "editable",
     "typescript",
-    "ui",
-    "library"
+    "yup",
+    "validation",
+    "context"
   ],
   "author": "Your Name",
   "license": "MIT",
@@ -55,5 +58,8 @@
     "react-dom": "^18.3.1",
     "typescript": "^5.4.5",
     "vitest": "^4.0.6"
+  },
+  "dependencies": {
+    "yup": "^1.7.1"
   }
 }

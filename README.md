@@ -1,328 +1,287 @@
-# React Component Package Template
+# 📋 FormTable
 
-Um template completo para criação de componentes React publicáveis com TypeScript, testes, build automatizado e estrutura profissional.
+Um gerenciador de formulário para tabelas com células editáveis, navegação por Tab, validação Yup e contexto React otimizado.
 
-## 🚀 Features
+## ✨ Funcionalidades
 
-- **TypeScript** - Tipagem completa incluída
-- **React 18+** - Compatível com as versões mais recentes
-- **Build automático** - Rollup para ESM e CJS
-- **Testes** - Vitest + React Testing Library
-- **CSS incluído** - Estilos prontos para uso
-- **Exemplo funcional** - App de demonstração
-- **Scripts de publicação** - Automação completa
-- **Performance otimizada** - React.memo integrado
+- 🔤 **Células editáveis** com diferentes tipos (texto, email, número, select)
+- ⌨️ **Navegação intuitiva** com Tab/Shift+Tab e setas
+- ⏎ **Submissão rápida** com Enter
+- ✅ **Validação robusta** com Yup (onBlur e onChange configuráveis)
+- 🎯 **Estados visuais** claros para células (ativa, editando, erro, modificada)
+- ➕ **Gerenciamento dinâmico** de linhas (adicionar/remover)
+- 🔄 **Reset individual** de linhas
+- 💾 **Contexto otimizado** para performance
+- 📱 **Design responsivo**
 
-## 📦 Como usar este template
-
-1. **Clone ou faça download do template**
-2. **Personalize o package.json** com seus dados
-3. **Implemente seu componente** em `src/index.tsx`
-4. **Ajuste os estilos** em `src/index.css`
-5. **Atualize os testes** em `src/__tests__/`
-6. **Modifique o exemplo** em `example-app/`
-7. **Atualize este README** com sua documentação
-
-## 🛠️ Installation
+## 🚀 Instalação
 
 ```bash
-npm install @your-scope/your-component-name
+npm install @DidiProjects/form-table yup
 ```
 
-## 📖 Basic Usage
+## 📖 Uso Básico
 
 ```tsx
-import YourComponent from '@your-scope/your-component-name';
+import React from 'react';
+import FormTable, { FormTableConfig } from '@DidiProjects/form-table';
+import * as yup from 'yup';
+
+const config: FormTableConfig = {
+  columns: [
+    {
+      key: 'nome',
+      type: 'text',
+      label: 'Nome Completo',
+      required: true,
+      validation: yup.string().required('Nome é obrigatório').min(2, 'Mínimo 2 caracteres')
+    },
+    {
+      key: 'email',
+      type: 'email',
+      label: 'E-mail',
+      required: true,
+      validation: yup.string().required().email('E-mail inválido')
+    },
+    {
+      key: 'idade',
+      type: 'number',
+      label: 'Idade',
+      validation: yup.number().min(0).max(120)
+    },
+    {
+      key: 'cargo',
+      type: 'select',
+      label: 'Cargo',
+      options: [
+        { value: 'dev', label: 'Desenvolvedor' },
+        { value: 'designer', label: 'Designer' }
+      ]
+    }
+  ],
+  initialRows: 3,
+  allowAddRows: true,
+  allowDeleteRows: true,
+  validateOnBlur: true,
+  submitOnEnter: true
+};
 
 function App() {
+  const handleRowSubmit = (rowId: string, data: Record<string, any>) => {
+    console.log('Linha submetida:', rowId, data);
+  };
+
+  const handleDataChange = (data: Record<string, Record<string, any>>) => {
+    console.log('Dados alterados:', data);
+  };
+
   return (
-    <YourComponent 
-      title="Hello World"
-      onClick={() => console.log('Clicked!')}
-    >
-      <p>Conteúdo do seu componente</p>
-    </YourComponent>
+    <FormTable
+      config={config}
+      onRowSubmit={handleRowSubmit}
+      onDataChange={handleDataChange}
+    />
   );
 }
 ```
 
-## 📋 Props
+## ⌨️ Navegação
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string` | `undefined` | Título opcional do componente |
-| `className` | `string` | `'your-component-container'` | Classe CSS do container |
-| `disabled` | `boolean` | `false` | Se o componente está desabilitado |
-| `onClick` | `function` | `undefined` | Callback para cliques |
-| `children` | `ReactNode` | `undefined` | Conteúdo filho do componente |
+| Tecla | Ação |
+|-------|------|
+| `Tab` | Próxima célula (direita, depois próxima linha) |
+| `Shift + Tab` | Célula anterior (esquerda, depois linha anterior) |
+| `Enter` | Submete a linha inteira |
+| `Escape` | Sai do modo de edição |
+| `←/→` | Navegação dentro do texto ou entre células |
+| `↑/↓` | Linha acima/abaixo |
 
-## 💡 Usage Examples
+## ⚙️ Configuração
 
-### Componente Simples
+### FormTableConfig
+
 ```tsx
-<YourComponent title="Meu Componente">
-  <p>Este é o conteúdo do componente</p>
-</YourComponent>
+interface FormTableConfig {
+  columns: CellConfig[];           // Configuração das colunas
+  initialRows?: number;            // Número inicial de linhas
+  allowAddRows?: boolean;          // Permitir adicionar linhas
+  allowDeleteRows?: boolean;       // Permitir deletar linhas
+  validateOnBlur?: boolean;        // Validar ao perder foco
+  validateOnChange?: boolean;      // Validar ao digitar
+  submitOnEnter?: boolean;         // Submeter com Enter
+}
 ```
 
-### Com Interatividade
+### CellConfig
+
 ```tsx
-<YourComponent 
-  title="Clicável"
-  onClick={() => alert('Clicou!')}
->
-  <div>Clique em mim!</div>
-</YourComponent>
+interface CellConfig {
+  key: string;                     // Chave única da coluna
+  type: 'text' | 'number' | 'email' | 'select';
+  label?: string;                  // Label do cabeçalho
+  required?: boolean;              // Campo obrigatório
+  options?: { value: any; label: string }[];  // Para tipo select
+  validation?: any;                // Schema Yup
+}
 ```
 
-### Desabilitado
-```tsx
-<YourComponent 
-  title="Desabilitado"
-  disabled={true}
->
-  <p>Este componente está desabilitado</p>
-</YourComponent>
+## 🎨 Personalização de Estilos
+
+O componente vem com estilos padrão que podem ser customizados:
+
+```css
+/* Sobrescrever estilos padrão */
+.form-table {
+  /* Suas customizações */
+}
+
+.form-table-cell.active {
+  background-color: #seu-azul;
+}
+
+.form-table-cell.error {
+  background-color: #seu-vermelho;
+}
 ```
 
-### Customizado
+### Classes CSS Disponíveis
+
+- `.form-table` - Container principal
+- `.form-table-cell` - Célula individual
+- `.form-table-cell.active` - Célula ativa
+- `.form-table-cell.editing` - Célula em edição
+- `.form-table-cell.error` - Célula com erro
+- `.form-table-cell.dirty` - Célula modificada
+- `.cell-error` - Mensagem de erro
+
+## 🔧 API Avançada
+
+### Hooks
+
 ```tsx
-<YourComponent 
-  title="Customizado"
-  className="meu-estilo-customizado"
-  onClick={() => console.log('Ação personalizada')}
->
-  <div>Conteúdo com estilo personalizado</div>
-</YourComponent>
+import { useFormTable, useFormTableCell } from '@DidiProjects/form-table';
+
+// Hook principal (usar dentro do FormTableProvider)
+const {
+  data,
+  updateCellValue,
+  validateAll,
+  addRow,
+  deleteRow,
+  getAllData
+} = useFormTable();
+
+// Hook otimizado para células individuais
+const {
+  cellData,
+  isActive,
+  updateValue,
+  startEdit,
+  endEdit
+} = useFormTableCell('rowId', 'cellKey');
 ```
 
-## 🎨 Development
+### Eventos
 
-### Scripts Disponíveis
+```tsx
+<FormTable
+  config={config}
+  initialData={{
+    'row-1': { nome: 'João', email: 'joao@email.com' }
+  }}
+  onRowSubmit={(rowId, data) => {
+    // Chamado quando Enter é pressionado
+  }}
+  onDataChange={(allData) => {
+    // Chamado toda vez que os dados mudam
+  }}
+/>
+```
+
+## 🧪 Exemplo Completo
+
+Execute o exemplo incluído no projeto:
 
 ```bash
-# Testes
-npm test                    # Executa testes
-npm run test:watch          # Testes em modo watch
-npm run test:coverage       # Cobertura de testes
-
-# Build
-npm run build              # Gera build de produção
-npm run validate           # Validação completa
-
-# Publicação
-npm run publish:patch      # Publica versão patch
-npm run publish:minor      # Publica versão minor
-npm run publish:major      # Publica versão major
-```
-
-### Estrutura do Projeto
-
-```
-/
-├── src/                   # Código fonte do componente
-│   ├── index.tsx         # Componente principal
-│   ├── index.css         # Estilos
-│   ├── utils/            # Utilitários
-│   └── __tests__/        # Testes
-├── example-app/           # App de demonstração
-├── scripts/              # Scripts de build/publicação
-└── dist/                 # Build gerado
-```
-
-## 🧪 Testing
-
-O template inclui testes configurados com Vitest e React Testing Library:
-
-```bash
-npm test                   # Executa todos os testes
-npm run test:ui           # Interface gráfica dos testes
-npm run test:coverage     # Relatório de cobertura
-```
-
-## 📋 Customization
-
-### Substituir o componente
-1. Edite [src/index.tsx](src/index.tsx) com sua lógica
-2. Atualize [src/index.css](src/index.css) com seus estilos
-4. Atualize os testes em [src/__tests__/](src/__tests__/)
-
-### Configurar o package
-1. Modifique [package.json](package.json) com suas informações
-2. Atualize este README.md
-3. Configure seu repositório Git
-
-## 🚀 Publishing
-
-1. **Configure seu escopo no package.json**
-2. **Faça login no npm**: `npm login`
-3. **Publique**: `npm run publish:patch`
-
-Ou use os scripts automáticos:
-- `npm run publish:patch` - Para correções
-- `npm run publish:minor` - Para novas funcionalidades
-- `npm run publish:major` - Para mudanças breaking
-
-## 📄 License
-
-MIT
-  <div>
-    <p>React, JavaScript and TypeScript are modern technologies.</p>
-    <span>All three words will be highlighted automatically.</span>
-  </div>
-</HighlightText>
-```
-
-### Complex Patterns
-```tsx
-<HighlightText search="\\b\\w+Script\\b">
-  <p>JavaScript, TypeScript and ActionScript will be highlighted.</p>
-</HighlightText>
-```
-
-## How It Works
-
-The component works recursively:
-
-1. **Analyzes content** - Traverses all child elements
-2. **Identifies text** - Finds text nodes within the structure
-3. **Applies highlighting** - Replaces matches with `<mark>` elements with CSS class
-4. **Preserves structure** - Maintains all original HTML elements
-5. **Rebuilds tree** - Returns complete structure with applied highlights
-
-```tsx
-// Input:
-<HighlightText search="React">
-  <div>
-    <h1>Title about React</h1>
-    <p>React is great</p>
-  </div>
-</HighlightText>
-
-// Output (rendered):
-<div className="highlight-text-container">
-  <div>
-    <h1>Title about <mark className="highlight">React</mark></h1>
-    <p><mark className="highlight">React</mark> is great</p>
-  </div>
-</div>
-```
-
-## Use Cases
-
-### Ideal for:
-- **Search results** - Highlight found terms
-- **Documentation** - Highlight keywords
-- **Tutorials** - Emphasize important concepts
-- **Blogs** - Highlight technical terms
-- **Dashboards** - Highlight important metrics
-- **E-learning** - Highlight concepts in lessons
-
-### Considerations:
-- For very large texts (>10MB), consider pagination
-- Complex regex patterns may impact performance
-- Elements with event listeners are preserved
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Build library
-npm run build
-
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with UI
-npm run test:ui
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run example
-cd example-app
+git clone https://github.com/seu-usuario/form-table
+cd form-table/example-app
 npm install
 npm start
 ```
 
-## Testing
+O exemplo mostra:
+- Diferentes tipos de campo
+- Validações customizadas
+- Manipulação de eventos
+- Exportação de dados
+- Interface completa
 
-The library includes a comprehensive test suite using **Vites** and **@testing-library/react**.
-
-### Test Structure
-
-Tests are organized in `src/__tests__/` and `src/utils/__tests__/` directories:
-
-- **`src/__tests__/HighlightText.test.tsx`** - Core component functionality
-- **`src/__tests__/utils.test.tsx`** - Main utility integration tests 
-- **`src/utils/__tests__/textProcessor.test.tsx`** - Text processing utilities
-- **`src/utils/__tests__/reactProcessor.test.tsx`** - React element processing
-
-### Test Coverage
-
-**76 tests passing** covering:
-
-- **Basic functionality** - Rendering, highlighting, multiple occurrences
-- **Case sensitivity** - Default insensitive, explicit sensitive mode
-- **Custom styling** - CSS classes, inline styles, CSS custom properties
-- **Regex patterns** - Special characters, complex patterns
-- **Edge cases** - Empty inputs, null/undefined, numbers, nested elements
-- **Text processing** - Escape regex, text parsing, highlight detection
-- **React processing** - Element traversal, DOM manipulation, children processing
-- **Props comparison** - Performance optimization, deep comparison
-- **Performance** - Large content, deep nesting, React.memo optimization
-- **Error handling** - Malformed regex, Unicode, special characters
-
-### Running Tests
+## 🏗️ Desenvolvimento
 
 ```bash
-# Run all tests
+# Clone o repositório
+git clone https://github.com/seu-usuario/form-table
+
+# Instale dependências
+npm install
+
+# Rode os testes
 npm test
 
-# Watch mode for development
+# Build para produção
+npm run build
+
+# Desenvolvimento com watch
 npm run test:watch
-
-# Visual test interface
-npm run test:ui
-
-# Generate coverage report
-npm run test:coverage
 ```
 
-## Migration from v1.x
+## 📦 Build e Publicação
 
-### Main changes:
-- **Props**: `text` → `children`
-- **Functionality**: Now works with any HTML content
-- **Flexibility**: Complete support for nested structures
+```bash
+# Build
+npm run build
 
-### Before (v1.x):
-```tsx
-<HighlightText 
-  text="Text to highlight words"
-  search="words"
-/>
+# Testes
+npm run validate
+
+# Publicação automática
+npm run publish:patch  # 1.0.0 -> 1.0.1
+npm run publish:minor  # 1.0.0 -> 1.1.0
+npm run publish:major  # 1.0.0 -> 2.0.0
 ```
 
-### After (v2.x):
-```tsx
-<HighlightText search="words">
-  Text to highlight words
-</HighlightText>
-```
+## 🤝 Contribuição
 
-## License
+1. Fork o projeto
+2. Crie sua feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-MIT © Diego Silva
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 🐛 Problemas Conhecidos
+
+- React StrictMode pode causar dupla renderização (esperado)
+- ESLint warnings sobre dependências de hooks (não afetam funcionalidade)
+
+## 🗺️ Roadmap
+
+- [ ] Suporte a mais tipos de campo (date, checkbox, radio)
+- [ ] Modo virtual para grandes datasets
+- [ ] Drag & drop para reordenação
+- [ ] Exportação para Excel/CSV
+- [ ] Temas pré-definidos
+- [ ] Suporte a RTL
+
+## ✅ Compatibilidade
+
+- React ≥ 16.8.0
+- TypeScript ≥ 4.0
+- Modern browsers (ES2017+)
 
 ---
 
-### Links
-- [GitHub](https://github.com/Didilv93/highlight-text)
-- [npm](https://www.npmjs.com/package/@dspackages/highlight-text)
-- [Issues](https://github.com/Didilv93/highlight-text/issues)
+Feito com ❤️ por [Diego](mailto:seu-email@exemplo.com)

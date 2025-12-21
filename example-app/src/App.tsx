@@ -1,107 +1,191 @@
 import React, { useState } from 'react';
-import YourComponent from '@your-scope/your-component-name';
+import FormTable from './form-table';
+import { FormTableConfig } from './form-table';
+import * as yup from 'yup';
+import './form-table/index.css';
 import './App.css';
 
 function App() {
-  const [title, setTitle] = useState('Template Demo');
-  const [disabled, setDisabled] = useState(false);
+  const [tableData, setTableData] = useState<Record<string, Record<string, any>>>({});
+
+  // Configuração da tabela
+  const tableConfig: FormTableConfig = {
+    columns: [
+      {
+        key: 'nome',
+        type: 'text',
+        label: 'Nome Completo',
+        required: true,
+        validation: yup.string().required('Nome é obrigatório').min(2, 'Nome deve ter pelo menos 2 caracteres')
+      },
+      {
+        key: 'email',
+        type: 'email',
+        label: 'E-mail',
+        required: true,
+        validation: yup.string().required('E-mail é obrigatório').email('E-mail inválido')
+      },
+      {
+        key: 'idade',
+        type: 'number',
+        label: 'Idade',
+        required: true,
+        validation: yup.number()
+          .typeError('Deve ser um número')
+          .required('Idade é obrigatória')
+          .min(0, 'Idade deve ser positiva')
+          .max(120, 'Idade deve ser realista')
+      },
+      {
+        key: 'cargo',
+        type: 'select',
+        label: 'Cargo',
+        required: true,
+        options: [
+          { value: 'dev', label: 'Desenvolvedor' },
+          { value: 'designer', label: 'Designer' },
+          { value: 'manager', label: 'Gerente' },
+          { value: 'analyst', label: 'Analista' }
+        ],
+        validation: yup.string().required('Cargo é obrigatório')
+      },
+      {
+        key: 'salario',
+        type: 'number',
+        label: 'Salário (R$)',
+        validation: yup.number()
+          .typeError('Deve ser um número')
+          .min(0, 'Salário deve ser positivo')
+      },
+      {
+        key: 'observacoes',
+        type: 'text',
+        label: 'Observações',
+        validation: yup.string().max(200, 'Máximo 200 caracteres')
+      }
+    ],
+    initialRows: 3,
+    allowAddRows: true,
+    allowDeleteRows: true,
+    validateOnBlur: true,
+    validateOnChange: false,
+    submitOnEnter: true
+  };
+
+  // Dados iniciais (opcional)
+  const initialData = {
+    'exemplo-1': {
+      nome: 'João Silva',
+      email: 'joao@exemplo.com',
+      idade: 30,
+      cargo: 'dev',
+      salario: 5000,
+      observacoes: 'Desenvolvedor experiente'
+    }
+  };
+
+  const handleRowSubmit = (rowId: string, data: Record<string, any>) => {
+    console.log('Linha submetida:', rowId, data);
+    alert(`Linha ${rowId} submetida com sucesso!\n${JSON.stringify(data, null, 2)}`);
+  };
+
+  const handleDataChange = (data: Record<string, Record<string, any>>) => {
+    setTableData(data);
+    console.log('Dados alterados:', data);
+  };
+
+  const exportData = () => {
+    const dataStr = JSON.stringify(tableData, null, 2);
+    console.log('Dados exportados:', dataStr);
+    
+    // Cria um arquivo JSON para download
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'form-table-data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Component Template Demo</h1>
-        
-        <div className="controls">
-          <div className="input-group">
-            <label htmlFor="title">Título:</label>
-            <input 
-              id="title"
-              type="text" 
-              value={title} 
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Digite um título..."
-            />
-          </div>
-          
-          <div className="checkbox-group">
-            <label>
-              <input 
-                type="checkbox" 
-                checked={disabled}
-                onChange={(e) => setDisabled(e.target.checked)}
-              />
-              Desabilitado
-            </label>
-          </div>
-        </div>
-
-        <div className="example">
-          <h2>Exemplo 1: Componente Básico</h2>
-          <YourComponent 
-            title={title}
-            disabled={disabled}
-            onClick={() => alert('Componente clicado!')}
-          >
-            <p>Este é um exemplo de conteúdo dentro do componente.</p>
-            <p>O título pode ser alterado dinamicamente.</p>
-          </YourComponent>
-        </div>
-
-        <div className="example">
-          <h2>Exemplo 2: Conteúdo Complexo</h2>
-          <YourComponent 
-            title="Componente com HTML Aninhado"
-            disabled={disabled}
-            onClick={() => console.log('Log no console')}
-          >
-            <div>
-              <h3>Subtítulo</h3>
-              <p>Este parágrafo contém <strong>texto em negrito</strong> e <em>texto em itálico</em>.</p>
-              <ul>
-                <li>Item 1: Exemplo de lista</li>
-                <li>Item 2: Componente flexível</li>
-                <li>Item 3: Template reutilizável</li>
-              </ul>
-            </div>
-          </YourComponent>
-        </div>
-
-        <div className="example">
-          <h2>Exemplo 3: Sem Título</h2>
-          <YourComponent disabled={disabled}>
-            <div>
-              <p>Componente sem título definido.</p>
-              <span>Ainda funciona perfeitamente!</span>
-            </div>
-          </YourComponent>
-        </div>
-
-        <div className="example">
-          <h2>Exemplo 4: Customização CSS</h2>
-          <YourComponent 
-            title="Componente Personalizado"
-            className="componente-customizado"
-            disabled={disabled}
-            onClick={() => alert('Estilo customizado!')}
-          >
-            <div>
-              <h4>Componente com estilo personalizado</h4>
-              <p>Este exemplo mostra como customizar o visual.</p>
-            </div>
-          </YourComponent>
-        </div>
-
-        <div className="info-section">
-          <h2>Como personalizar:</h2>
-          <ol>
-            <li>Edite <code>src/index.tsx</code> para sua lógica</li>
-            <li>Modifique <code>src/index.css</code> para estilos</li>
-            <li>Atualize <code>src/utils/</code> conforme necessário</li>
-            <li>Ajuste os testes em <code>src/__tests__/</code></li>
-            <li>Configure <code>package.json</code> com seus dados</li>
-          </ol>
-        </div>
+        <h1>FormTable - Gerenciador de Formulário para Tabelas</h1>
+        <p>
+          Este é um exemplo de uso do componente FormTable com células editáveis,
+          navegação por Tab, validação com Yup e contexto React.
+        </p>
       </header>
+
+      <div className="app-content">
+        <div className="demo-section">
+          <h2>Exemplo: Cadastro de Funcionários</h2>
+          <div className="demo-description">
+            <p><strong>Funcionalidades disponíveis:</strong></p>
+            <ul>
+              <li>🔤 Células editáveis com diferentes tipos (texto, email, número, select)</li>
+              <li>⌨️ Navegação com Tab/Shift+Tab entre células</li>
+              <li>⏎ Submissão de linha com Enter</li>
+              <li>✅ Validação com Yup (onBlur e onChange opcionais)</li>
+              <li>🎯 Foco visual e estados da célula</li>
+              <li>➕ Adicionar/remover linhas dinamicamente</li>
+              <li>🔄 Reset de linha individual</li>
+              <li>💾 Contexto compartilhado entre células</li>
+            </ul>
+          </div>
+
+          <FormTable
+            config={tableConfig}
+            initialData={initialData}
+            onRowSubmit={handleRowSubmit}
+            onDataChange={handleDataChange}
+            className="demo-table"
+          />
+
+          <div className="export-section">
+            <button 
+              className="export-btn" 
+              onClick={exportData}
+              disabled={Object.keys(tableData).length === 0}
+            >
+              📄 Exportar Dados JSON
+            </button>
+            
+            <div className="data-preview">
+              <h3>Dados Atuais:</h3>
+              <pre>{JSON.stringify(tableData, null, 2)}</pre>
+            </div>
+          </div>
+        </div>
+
+        <div className="instructions">
+          <h2>Como usar:</h2>
+          <div className="instruction-cards">
+            <div className="card">
+              <h3>🖱️ Edição</h3>
+              <p>Clique em uma célula para editá-la. Clique fora ou pressione Escape para sair.</p>
+            </div>
+            
+            <div className="card">
+              <h3>⌨️ Navegação</h3>
+              <p>Use Tab/Shift+Tab para navegar. Setas também funcionam dentro do modo edição.</p>
+            </div>
+            
+            <div className="card">
+              <h3>⏎ Submissão</h3>
+              <p>Pressione Enter em qualquer célula para submeter a linha inteira.</p>
+            </div>
+            
+            <div className="card">
+              <h3>✅ Validação</h3>
+              <p>Validações automáticas aparecem quando você sai da célula (onBlur).</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
