@@ -1,48 +1,48 @@
-# ✅ Template de Componente React - Desidratado com Sucesso!
+# React Component Template - Successfully Dehydrated!
 
-## 🎉 Transformação Realizada
+## Transformation Completed
 
-O seu pacote `@dspackages/highlight-text` foi transformado em um **template genérico** reutilizável para criação de componentes React. 
+Your package `@dspackages/highlight-text` has been transformed into a **generic template** reusable for creating React components.
 
-## 📝 O que foi alterado:
+## What was changed:
 
-### 1. **package.json** - Genérico
-- Nome: `@your-scope/your-component-name`
-- Descrição genérica
-- Autor: `Your Name`
+### 1. **package.json** - Generic
+- Name: `@your-scope/your-component-name`
+- Generic description
+- Author: `Your Name`
 - Repository: `your-username/your-repo`
 
-### 2. **Componente Principal** (`src/index.tsx`)
-- **Antes**: HighlightText específico
-- **Agora**: YourComponent genérico com props básicas:
-  - `title`: string opcional
-  - `className`: customização de estilos
-  - `disabled`: estado desabilitado
-  - `onClick`: callback de clique
-  - `children`: conteúdo React
+### 2. **Main Component** (`src/index.tsx`)
+- **Before**: HighlightText specific
+- **Now**: YourComponent generic with basic props:
+  - `title`: optional string
+  - `className`: style customization
+  - `disabled`: disabled state
+  - `onClick`: click callback
+  - `children`: React content
 
-### 3. **Estilos** (`src/index.css`) 
-- CSS genérico com:
-  - Container básico
-  - Estado desabilitado
+### 3. **Styles** (`src/index.css`) 
+- Generic CSS with:
+  - Basic container
+  - Disabled state
   - Hover effects
-  - Layout responsivo
+  - Responsive layout
 
 ### 4. **Utilitários** (`src/utils/`)
 - **helpers.ts**: Funções auxiliares úteis:
   - `formatString`: formatação de strings
-  - `isValidElement`: validação de elementos
+  - `isValidElement`: element validation
   - `generateId`: geração de IDs únicos
-  - `debounce`: função de debounce
+  - `debounce`: debounce function
 
 ### 5. **Testes** - Completamente genéricos
 - Testes do componente principal
 - Testes dos utilitários
-- Cobertura: ✅ 21 testes passando
+- Coverage: 21 tests passing
 
-### 6. **App de Exemplo** (`example-app/`)
+### 6. **Example App** (`example-app/`)
 - Demo interativa do template
-- Múltiplos exemplos de uso
+- Multiple usage examples
 - Interface para testar props
 
 ### 7. **Documentação**
@@ -50,14 +50,14 @@ O seu pacote `@dspackages/highlight-text` foi transformado em um **template gen�
 - TEMPLATE_GUIDE.md com guia completo
 - USAGE.md atualizado
 
-## 🚀 Como usar este template:
+## How to use this template:
 
 ### 1. Configure suas informações
 ```bash
 # Edite package.json com seus dados
 {
   "name": "@sua-empresa/seu-componente",
-  "description": "Descrição do seu componente",
+  "description": "Your component description",
   "author": "Seu Nome"
 }
 ```
@@ -90,44 +90,44 @@ npm run build      # Build
 cd example-app && npm start  # Demo
 ```
 
-## ✨ Recursos Incluídos
+## Included Resources
 
 ### ⚡ Performance
 - React.memo otimizado
 - Comparação de props eficiente
 - CSS otimizado
 
-### 🧪 Testing
+### Testing
 - Vitest configurado
 - React Testing Library
 - Cobertura de testes
 - Testes genéricos reutilizáveis
 
-### 📦 Build & Deploy
+### Build & Deploy
 - TypeScript + Rollup
 - Múltiplos formatos (CJS/ESM)
 - Scripts de publicação automática
 - CSS incluído no bundle
 
-### 🎯 Developer Experience
+### Developer Experience
 - TypeScript completo
 - IntelliSense suportado
-- Hot reload no exemplo
+- Hot reload in example
 - Scripts npm prontos
 
-## 🎉 Status Final
+## Final Status
 
-✅ **Template 100% funcional e pronto para uso!**
+**Template 100% functional and ready to use!**
 
-- ✅ Testes: 21/21 passando
-- ✅ Build: Gerado com sucesso
-- ✅ TypeScript: Sem erros
-- ✅ Exemplo: Funcionando
-- ✅ Documentação: Completa
+- Tests: 21/21 passing
+- Build: Generated successfully
+- TypeScript: No errors
+- Example: Working
+- Documentation: Complete
 
 ---
 
-**🚀 Agora você tem um template profissional para criar qualquer componente React reutilizável!**
+**Now you have a professional template to create any reusable React component!**
 
 ### Próximos passos:
 1. Personalize com seu componente

@@ -7,60 +7,60 @@ import './App.css';
 function App() {
   const [tableData, setTableData] = useState<Record<string, Record<string, any>>>({});
 
-  // Configuração da tabela
+  // Table configuration
   const tableConfig: FormTableConfig = {
     columns: [
       {
-        key: 'nome',
+        key: 'name',
         type: 'text',
-        label: 'Nome Completo',
+        label: 'Full Name',
         required: true,
-        validation: yup.string().required('Nome é obrigatório').min(2, 'Nome deve ter pelo menos 2 caracteres')
+        validation: yup.string().required('Name is required').min(2, 'Name must have at least 2 characters')
       },
       {
         key: 'email',
         type: 'email',
-        label: 'E-mail',
+        label: 'Email',
         required: true,
-        validation: yup.string().required('E-mail é obrigatório').email('E-mail inválido')
+        validation: yup.string().required('Email is required').email('Invalid email')
       },
       {
-        key: 'idade',
+        key: 'age',
         type: 'number',
-        label: 'Idade',
+        label: 'Age',
         required: true,
         validation: yup.number()
-          .typeError('Deve ser um número')
-          .required('Idade é obrigatória')
-          .min(0, 'Idade deve ser positiva')
-          .max(120, 'Idade deve ser realista')
+          .typeError('Must be a number')
+          .required('Age is required')
+          .min(0, 'Age must be positive')
+          .max(120, 'Age must be realistic')
       },
       {
-        key: 'cargo',
+        key: 'position',
         type: 'select',
-        label: 'Cargo',
+        label: 'Position',
         required: true,
         options: [
-          { value: 'dev', label: 'Desenvolvedor' },
+          { value: 'dev', label: 'Developer' },
           { value: 'designer', label: 'Designer' },
-          { value: 'manager', label: 'Gerente' },
-          { value: 'analyst', label: 'Analista' }
+          { value: 'manager', label: 'Manager' },
+          { value: 'analyst', label: 'Analyst' }
         ],
-        validation: yup.string().required('Cargo é obrigatório')
+        validation: yup.string().required('Position is required')
       },
       {
-        key: 'salario',
+        key: 'salary',
         type: 'number',
-        label: 'Salário (R$)',
+        label: 'Salary ($)',
         validation: yup.number()
-          .typeError('Deve ser um número')
-          .min(0, 'Salário deve ser positivo')
+          .typeError('Must be a number')
+          .min(0, 'Salary must be positive')
       },
       {
-        key: 'observacoes',
+        key: 'notes',
         type: 'text',
-        label: 'Observações',
-        validation: yup.string().max(200, 'Máximo 200 caracteres')
+        label: 'Notes',
+        validation: yup.string().max(200, 'Maximum 200 characters')
       }
     ],
     initialRows: 3,
@@ -71,33 +71,33 @@ function App() {
     submitOnEnter: true
   };
 
-  // Dados iniciais (opcional)
+  // Initial data (optional)
   const initialData = {
-    'exemplo-1': {
-      nome: 'João Silva',
-      email: 'joao@exemplo.com',
-      idade: 30,
-      cargo: 'dev',
-      salario: 5000,
-      observacoes: 'Desenvolvedor experiente'
+    'example-1': {
+      name: 'John Silva',
+      email: 'john@example.com',
+      age: 30,
+      position: 'dev',
+      salary: 5000,
+      notes: 'Experienced developer'
     }
   };
 
   const handleRowSubmit = (rowId: string, data: Record<string, any>) => {
-    console.log('Linha submetida:', rowId, data);
-    alert(`Linha ${rowId} submetida com sucesso!\n${JSON.stringify(data, null, 2)}`);
+    console.log('Row submitted:', rowId, data);
+    alert(`Row ${rowId} submitted successfully!\n${JSON.stringify(data, null, 2)}`);
   };
 
   const handleDataChange = (data: Record<string, Record<string, any>>) => {
     setTableData(data);
-    console.log('Dados alterados:', data);
+    console.log('Data changed:', data);
   };
 
   const exportData = () => {
     const dataStr = JSON.stringify(tableData, null, 2);
-    console.log('Dados exportados:', dataStr);
+    console.log('Data exported:', dataStr);
     
-    // Cria um arquivo JSON para download
+    // Creates a JSON file for download
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -112,27 +112,26 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>FormTable - Gerenciador de Formulário para Tabelas</h1>
+        <h1>FormTable - Table Form Manager</h1>
         <p>
-          Este é um exemplo de uso do componente FormTable com células editáveis,
-          navegação por Tab, validação com Yup e contexto React.
+          This is a usage example of the FormTable component with editable cells,
+          Tab navigation, Yup validation, and React context.
         </p>
       </header>
 
       <div className="app-content">
         <div className="demo-section">
-          <h2>Exemplo: Cadastro de Funcionários</h2>
+          <h2>Example: Employee Registration</h2>
           <div className="demo-description">
-            <p><strong>Funcionalidades disponíveis:</strong></p>
+            <p><strong>Available features:</strong></p>
             <ul>
-              <li>🔤 Células editáveis com diferentes tipos (texto, email, número, select)</li>
-              <li>⌨️ Navegação com Tab/Shift+Tab entre células</li>
-              <li>⏎ Submissão de linha com Enter</li>
-              <li>✅ Validação com Yup (onBlur e onChange opcionais)</li>
-              <li>🎯 Foco visual e estados da célula</li>
-              <li>➕ Adicionar/remover linhas dinamicamente</li>
-              <li>🔄 Reset de linha individual</li>
-              <li>💾 Contexto compartilhado entre células</li>
+              <li>Editable cells with different types (text, email, number, select)</li>
+              <li>Tab/Shift+Tab navigation between cells</li>
+              <li>Row submission with Enter</li>
+              <li>Yup validation (onBlur and onChange optional)</li>
+              <li>Visual focus and cell states</li>
+              <li>Individual row reset</li>
+              <li>Shared context between cells</li>
             </ul>
           </div>
 
@@ -150,37 +149,37 @@ function App() {
               onClick={exportData}
               disabled={Object.keys(tableData).length === 0}
             >
-              📄 Exportar Dados JSON
+              Export JSON Data
             </button>
             
             <div className="data-preview">
-              <h3>Dados Atuais:</h3>
+              <h3>Current Data:</h3>
               <pre>{JSON.stringify(tableData, null, 2)}</pre>
             </div>
           </div>
         </div>
 
         <div className="instructions">
-          <h2>Como usar:</h2>
+          <h2>How to use:</h2>
           <div className="instruction-cards">
             <div className="card">
-              <h3>🖱️ Edição</h3>
-              <p>Clique em uma célula para editá-la. Clique fora ou pressione Escape para sair.</p>
+              <h3>Editing</h3>
+              <p>Click on a cell to edit it. Click outside or press Escape to exit.</p>
             </div>
             
             <div className="card">
-              <h3>⌨️ Navegação</h3>
-              <p>Use Tab/Shift+Tab para navegar. Setas também funcionam dentro do modo edição.</p>
+              <h3>Navigation</h3>
+              <p>Use Tab/Shift+Tab to navigate. Arrows also work within edit mode.</p>
             </div>
             
             <div className="card">
-              <h3>⏎ Submissão</h3>
-              <p>Pressione Enter em qualquer célula para submeter a linha inteira.</p>
+              <h3>Submission</h3>
+              <p>Press Enter on any cell to submit the entire row.</p>
             </div>
             
             <div className="card">
-              <h3>✅ Validação</h3>
-              <p>Validações automáticas aparecem quando você sai da célula (onBlur).</p>
+              <h3>Validation</h3>
+              <p>Automatic validations appear when you leave the cell (onBlur).</p>
             </div>
           </div>
         </div>

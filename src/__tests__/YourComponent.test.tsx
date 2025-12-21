@@ -5,7 +5,7 @@ import YourComponent from '../index';
 
 describe('YourComponent', () => {
   describe('Funcionalidade Básica', () => {
-    it('deve renderizar children corretamente', () => {
+    it('should render children correctly', () => {
       render(
         <YourComponent>
           <p>Conteúdo de teste</p>
@@ -15,7 +15,7 @@ describe('YourComponent', () => {
       expect(screen.getByText('Conteúdo de teste')).toBeInTheDocument();
     });
 
-    it('deve exibir título quando fornecido', () => {
+    it('should display title when provided', () => {
       render(
         <YourComponent title="Título de Teste">
           <p>Conteúdo</p>
@@ -26,7 +26,7 @@ describe('YourComponent', () => {
       expect(screen.getByText('Título de Teste').tagName).toBe('H2');
     });
 
-    it('deve aplicar className padrão', () => {
+    it('should apply default className', () => {
       render(
         <YourComponent>
           <p>Conteúdo</p>

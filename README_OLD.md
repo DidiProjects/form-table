@@ -2,7 +2,7 @@
 
 Um template completo para criação de componentes React publicáveis com TypeScript, testes, build automatizado e estrutura profissional.
 
-## 🚀 Features
+## Features
 
 - **TypeScript** - Tipagem completa incluída
 - **React 18+** - Compatível com as versões mais recentes

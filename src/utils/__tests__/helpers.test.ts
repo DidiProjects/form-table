@@ -50,7 +50,7 @@ describe('helpers', () => {
       vi.useRealTimers();
     });
 
-    it('deve atrasar a execução da função', () => {
+    it('should delay function execution', () => {
       const mockFn = vi.fn();
       const debouncedFn = debounce(mockFn, 100);
       

@@ -159,7 +159,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       case 'select':
         return (
           <select {...commonProps}>
-            <option value="">Selecione...</option>
+            <option value="">Select...</option>
             {config.options?.map((option, index) => (
               <option key={index} value={option.value}>
                 {option.label}

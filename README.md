@@ -1,26 +1,26 @@
-# 📋 FormTable
+# FormTable
 
-Um gerenciador de formulário para tabelas com células editáveis, navegação por Tab, validação Yup e contexto React otimizado.
+A form manager for tables with editable cells, Tab navigation, Yup validation, and optimized React context.
 
-## ✨ Funcionalidades
+## Features
 
-- 🔤 **Células editáveis** com diferentes tipos (texto, email, número, select)
-- ⌨️ **Navegação intuitiva** com Tab/Shift+Tab e setas
-- ⏎ **Submissão rápida** com Enter
-- ✅ **Validação robusta** com Yup (onBlur e onChange configuráveis)
-- 🎯 **Estados visuais** claros para células (ativa, editando, erro, modificada)
-- ➕ **Gerenciamento dinâmico** de linhas (adicionar/remover)
-- 🔄 **Reset individual** de linhas
-- 💾 **Contexto otimizado** para performance
-- 📱 **Design responsivo**
+- **Editable cells** with different types (text, email, number, select)
+- **Intuitive navigation** with Tab/Shift+Tab and arrows
+- **Quick submission** with Enter
+- **Robust validation** with Yup (configurable onBlur and onChange)
+- **Clear visual states** for cells (active, editing, error, modified)
+- **Dynamic row management** (add/remove)
+- **Individual row reset**
+- **Performance-optimized context**
+- **Responsive design**
 
-## 🚀 Instalação
+## Installation
 
 ```bash
 npm install @dspackages/form-table yup
 ```
 
-## 📖 Uso Básico
+## Basic Usage
 
 ```tsx
 import React from 'react';
@@ -30,31 +30,31 @@ import * as yup from 'yup';
 const config: FormTableConfig = {
   columns: [
     {
-      key: 'nome',
+      key: 'name',
       type: 'text',
-      label: 'Nome Completo',
+      label: 'Full Name',
       required: true,
-      validation: yup.string().required('Nome é obrigatório').min(2, 'Mínimo 2 caracteres')
+      validation: yup.string().required('Name is required').min(2, 'Minimum 2 characters')
     },
     {
       key: 'email',
       type: 'email',
-      label: 'E-mail',
+      label: 'Email',
       required: true,
-      validation: yup.string().required().email('E-mail inválido')
+      validation: yup.string().required().email('Invalid email')
     },
     {
-      key: 'idade',
+      key: 'age',
       type: 'number',
-      label: 'Idade',
+      label: 'Age',
       validation: yup.number().min(0).max(120)
     },
     {
-      key: 'cargo',
+      key: 'position',
       type: 'select',
-      label: 'Cargo',
+      label: 'Position',
       options: [
-        { value: 'dev', label: 'Desenvolvedor' },
+        { value: 'dev', label: 'Developer' },
         { value: 'designer', label: 'Designer' }
       ]
     }
@@ -68,11 +68,11 @@ const config: FormTableConfig = {
 
 function App() {
   const handleRowSubmit = (rowId: string, data: Record<string, any>) => {
-    console.log('Linha submetida:', rowId, data);
+    console.log('Row submitted:', rowId, data);
   };
 
   const handleDataChange = (data: Record<string, Record<string, any>>) => {
-    console.log('Dados alterados:', data);
+    console.log('Data changed:', data);
   };
 
   return (
@@ -85,30 +85,30 @@ function App() {
 }
 ```
 
-## ⌨️ Navegação
+## Navigation
 
-| Tecla | Ação |
-|-------|------|
-| `Tab` | Próxima célula (direita, depois próxima linha) |
-| `Shift + Tab` | Célula anterior (esquerda, depois linha anterior) |
-| `Enter` | Submete a linha inteira |
-| `Escape` | Sai do modo de edição |
-| `←/→` | Navegação dentro do texto ou entre células |
-| `↑/↓` | Linha acima/abaixo |
+| Key | Action |
+|-----|--------|
+| `Tab` | Next cell (right, then next row) |
+| `Shift + Tab` | Previous cell (left, then previous row) |
+| `Enter` | Submit entire row |
+| `Escape` | Exit edit mode |
+| `←/→` | Navigate within text or between cells |
+| `↑/↓` | Row above/below |
 
-## ⚙️ Configuração
+## Configuration
 
 ### FormTableConfig
 
 ```tsx
 interface FormTableConfig {
-  columns: CellConfig[];           // Configuração das colunas
-  initialRows?: number;            // Número inicial de linhas
-  allowAddRows?: boolean;          // Permitir adicionar linhas
-  allowDeleteRows?: boolean;       // Permitir deletar linhas
-  validateOnBlur?: boolean;        // Validar ao perder foco
-  validateOnChange?: boolean;      // Validar ao digitar
-  submitOnEnter?: boolean;         // Submeter com Enter
+  columns: CellConfig[];           // Column configuration
+  initialRows?: number;            // Initial number of rows
+  allowAddRows?: boolean;          // Allow adding rows
+  allowDeleteRows?: boolean;       // Allow deleting rows
+  validateOnBlur?: boolean;        // Validate on blur
+  validateOnChange?: boolean;      // Validate on typing
+  submitOnEnter?: boolean;         // Submit with Enter
 }
 ```
 
@@ -116,52 +116,52 @@ interface FormTableConfig {
 
 ```tsx
 interface CellConfig {
-  key: string;                     // Chave única da coluna
+  key: string;                     // Unique column key
   type: 'text' | 'number' | 'email' | 'select';
-  label?: string;                  // Label do cabeçalho
-  required?: boolean;              // Campo obrigatório
-  options?: { value: any; label: string }[];  // Para tipo select
-  validation?: any;                // Schema Yup
+  label?: string;                  // Header label
+  required?: boolean;              // Required field
+  options?: { value: any; label: string }[];  // For select type
+  validation?: any;                // Yup schema
 }
 ```
 
-## 🎨 Personalização de Estilos
+## Style Customization
 
-O componente vem com estilos padrão que podem ser customizados:
+The component comes with default styles that can be customized:
 
 ```css
-/* Sobrescrever estilos padrão */
+/* Override default styles */
 .form-table {
-  /* Suas customizações */
+  /* Your customizations */
 }
 
 .form-table-cell.active {
-  background-color: #seu-azul;
+  background-color: #your-blue;
 }
 
 .form-table-cell.error {
-  background-color: #seu-vermelho;
+  background-color: #your-red;
 }
 ```
 
-### Classes CSS Disponíveis
+### Available CSS Classes
 
-- `.form-table` - Container principal
-- `.form-table-cell` - Célula individual
-- `.form-table-cell.active` - Célula ativa
-- `.form-table-cell.editing` - Célula em edição
-- `.form-table-cell.error` - Célula com erro
-- `.form-table-cell.dirty` - Célula modificada
-- `.cell-error` - Mensagem de erro
+- `.form-table` - Main container
+- `.form-table-cell` - Individual cell
+- `.form-table-cell.active` - Active cell
+- `.form-table-cell.editing` - Cell being edited
+- `.form-table-cell.error` - Cell with error
+- `.form-table-cell.dirty` - Modified cell
+- `.cell-error` - Error message
 
-## 🔧 API Avançada
+## Advanced API
 
 ### Hooks
 
 ```tsx
 import { useFormTable, useFormTableCell } from '@dspackages/form-table';
 
-// Hook principal (usar dentro do FormTableProvider)
+// Main hook (use inside FormTableProvider)
 const {
   data,
   updateCellValue,
@@ -171,7 +171,7 @@ const {
   getAllData
 } = useFormTable();
 
-// Hook otimizado para células individuais
+// Optimized hook for individual cells
 const {
   cellData,
   isActive,
@@ -181,107 +181,107 @@ const {
 } = useFormTableCell('rowId', 'cellKey');
 ```
 
-### Eventos
+### Events
 
 ```tsx
 <FormTable
   config={config}
   initialData={{
-    'row-1': { nome: 'João', email: 'joao@email.com' }
+    'row-1': { name: 'John', email: 'john@email.com' }
   }}
   onRowSubmit={(rowId, data) => {
-    // Chamado quando Enter é pressionado
+    // Called when Enter is pressed
   }}
   onDataChange={(allData) => {
-    // Chamado toda vez que os dados mudam
+    // Called whenever data changes
   }}
 />
 ```
 
-## 🧪 Exemplo Completo
+## Complete Example
 
-Execute o exemplo incluído no projeto:
+Run the included example in the project:
 
 ```bash
-git clone https://github.com/seu-usuario/form-table
+git clone https://github.com/your-user/form-table
 cd form-table/example-app
 npm install
 npm start
 ```
 
-O exemplo mostra:
-- Diferentes tipos de campo
-- Validações customizadas
-- Manipulação de eventos
-- Exportação de dados
-- Interface completa
+The example shows:
+- Different field types
+- Custom validations
+- Event handling
+- Data export
+- Complete interface
 
-## 🏗️ Desenvolvimento
+## Development
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/form-table
+# Clone the repository
+git clone https://github.com/your-user/form-table
 
-# Instale dependências
+# Install dependencies
 npm install
 
-# Rode os testes
+# Run tests
 npm test
 
-# Build para produção
+# Build for production
 npm run build
 
-# Desenvolvimento com watch
+# Development with watch
 npm run test:watch
 ```
 
-## 📦 Build e Publicação
+## Build and Publishing
 
 ```bash
 # Build
 npm run build
 
-# Testes
+# Tests
 npm run validate
 
-# Publicação automática
+# Automatic publishing
 npm run publish:patch  # 1.0.0 -> 1.0.1
 npm run publish:minor  # 1.0.0 -> 1.1.0
 npm run publish:major  # 1.0.0 -> 2.0.0
 ```
 
-## 🤝 Contribuição
+## Contributing
 
-1. Fork o projeto
-2. Crie sua feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📄 Licença
+## License
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🐛 Problemas Conhecidos
+## Known Issues
 
-- React StrictMode pode causar dupla renderização (esperado)
-- ESLint warnings sobre dependências de hooks (não afetam funcionalidade)
+- React StrictMode may cause double rendering (expected)
+- ESLint warnings about hook dependencies (do not affect functionality)
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [ ] Suporte a mais tipos de campo (date, checkbox, radio)
-- [ ] Modo virtual para grandes datasets
-- [ ] Drag & drop para reordenação
-- [ ] Exportação para Excel/CSV
-- [ ] Temas pré-definidos
-- [ ] Suporte a RTL
+- [ ] Support for more field types (date, checkbox, radio)
+- [ ] Virtual mode for large datasets
+- [ ] Drag & drop for reordering
+- [ ] Excel/CSV export
+- [ ] Pre-defined themes
+- [ ] RTL support
 
-## ✅ Compatibilidade
+## Compatibility
 
-- React ≥ 16.8.0
-- TypeScript ≥ 4.0
+- React >= 16.8.0
+- TypeScript >= 4.0
 - Modern browsers (ES2017+)
 
 ---
 
-Feito com ❤️ por [Diego](mailto:seu-email@exemplo.com)
+Made with care by [Diego](mailto:your-email@example.com)

@@ -32,13 +32,13 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
 
   const handleValidateAll = async () => {
     const isValid = await validateAll();
-    console.log('Validação completa:', isValid ? 'Sucesso' : 'Erro');
+    console.log('Complete validation:', isValid ? 'Success' : 'Error');
     return isValid;
   };
 
   const handleGetAllData = () => {
     const allData = getAllData();
-    console.log('Dados completos:', allData);
+    console.log('Complete data:', allData);
     return allData;
   };
 
@@ -61,9 +61,9 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
             type="button" 
             className="btn btn-add-row" 
             onClick={handleAddRow}
-            title="Adicionar linha"
+            title="Add row"
           >
-            + Adicionar Linha
+            + Add Row
           </button>
         )}
         
@@ -72,18 +72,18 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
             type="button" 
             className="btn btn-validate" 
             onClick={handleValidateAll}
-            title="Validar todos os dados"
+            title="Validate all data"
           >
-            Validar Tudo
+            Validate All
           </button>
           
           <button 
             type="button" 
             className="btn btn-export" 
             onClick={handleGetAllData}
-            title="Exportar dados (console)"
+            title="Export data (console)"
           >
-            Ver Dados
+            View Data
           </button>
         </div>
       </div>
@@ -103,7 +103,7 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
                     {column.label || column.key}
                   </span>
                   {column.required && (
-                    <span className="required-indicator" title="Campo obrigatório">
+                    <span className="required-indicator" title="Required field">
                       *
                     </span>
                   )}
@@ -113,7 +113,7 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
             
             {config.allowDeleteRows !== false && (
               <th className="form-table-header actions-header" role="columnheader">
-                Ações
+                Actions
               </th>
             )}
           </tr>
@@ -126,14 +126,14 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
                 colSpan={config.columns.length + (config.allowDeleteRows !== false ? 1 : 0)}
                 className="empty-table"
               >
-                Nenhum dado disponível. 
+                No data available. 
                 {config.allowAddRows !== false && (
                   <button 
                     type="button" 
                     className="btn btn-link" 
                     onClick={handleAddRow}
                   >
-                    Clique aqui para adicionar uma linha
+                    Click here to add a row
                   </button>
                 )}
               </td>
@@ -158,7 +158,7 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
                         type="button"
                         className="btn btn-reset"
                         onClick={() => handleResetRow(rowId)}
-                        title="Resetar linha"
+                        title="Reset row"
                       >
                         ↺
                       </button>
@@ -167,7 +167,7 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
                         type="button"
                         className="btn btn-delete"
                         onClick={() => handleDeleteRow(rowId)}
-                        title="Deletar linha"
+                        title="Delete row"
                       >
                         ✕
                       </button>
@@ -184,22 +184,22 @@ const FormTableInner: React.FC<Omit<FormTableProps, 'config' | 'initialData'>> =
       <div className="form-table-footer">
         <div className="footer-info">
           <span className="row-count">
-            {rowIds.length} linha{rowIds.length !== 1 ? 's' : ''}
+            {rowIds.length} row{rowIds.length !== 1 ? 's' : ''}
           </span>
         </div>
         
         <div className="footer-legend">
           <div className="legend-item">
             <span className="legend-symbol dirty">●</span>
-            <span className="legend-text">Modificado</span>
+            <span className="legend-text">Modified</span>
           </div>
           <div className="legend-item">
             <span className="legend-symbol error">⚠</span>
-            <span className="legend-text">Erro de validação</span>
+            <span className="legend-text">Validation error</span>
           </div>
           <div className="legend-item">
             <span className="legend-symbol required">*</span>
-            <span className="legend-text">Campo obrigatório</span>
+            <span className="legend-text">Required field</span>
           </div>
         </div>
       </div>

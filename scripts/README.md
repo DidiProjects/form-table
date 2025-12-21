@@ -1,87 +1,87 @@
 # Publication Scripts
 
-Este diretório contém scripts automatizados para publicação do pacote `@dspackages/highlight-text`.
+This directory contains automated scripts for publishing the `@dspackages/highlight-text` package.
 
-## Scripts Disponíveis
+## Available Scripts
 
 ### PowerShell (Windows) - `publish.ps1`
-Script principal otimizado para Windows PowerShell.
+Main script optimized for Windows PowerShell.
 
 ```bash
-# Publicar com incremento patch (2.2.1 → 2.2.2)
+# Publish with patch increment (2.2.1 → 2.2.2)
 npm run publish:patch
 
-# Publicar com incremento minor (2.2.1 → 2.3.0)
+# Publish with minor increment (2.2.1 → 2.3.0)
 npm run publish:minor
 
-# Publicar com incremento major (2.2.1 → 3.0.0)
+# Publish with major increment (2.2.1 → 3.0.0)
 npm run publish:major
 ```
 
 ### Node.js (Cross-platform) - `publish.js`
-Script alternativo compatível com qualquer sistema operacional.
+Alternative script compatible with any operating system.
 
 ```bash
-# Uso direto
+# Direct usage
 node scripts/publish.js [patch|minor|major]
 ```
 
-## Processo de Publicação
+## Publication Process
 
-O script automatiza todo o processo de publicação:
+The script automates the entire publication process:
 
-1. **Executa testes** - Roda todos os 76 testes unitários
-2. **Build do projeto** - Compila TypeScript e copia CSS
-3. **Incrementa versão** - Atualiza package.json e cria git tag
-4. **Publica no npm** - Envia para o registry do npm
-5. **Push para git** - Envia mudanças e tags para o repositório
+1. **Run tests** - Runs all 76 unit tests
+2. **Build project** - Compiles TypeScript and copies CSS
+3. **Increment version** - Updates package.json and creates git tag
+4. **Publish to npm** - Sends to npm registry
+5. **Push to git** - Sends changes and tags to repository
 
-## Validações
+## Validations
 
-Antes da publicação, o script verifica:
+Before publishing, the script verifies:
 
-- Todos os testes passando (76 testes)
-- Build sem erros
-- Versão incrementada corretamente
-- Git em estado limpo
+- All tests passing (76 tests)
+- Build without errors
+- Version incremented correctly
+- Git in clean state
 
-## Falhas de Segurança
+## Security Failures
 
-Se qualquer etapa falhar, o processo é interrompido:
+If any step fails, the process is interrupted:
 
-- **Testes falhando** → Publicação cancelada
-- **Erro de build** → Publicação cancelada
-- **Erro de versioning** → Publicação cancelada
-- **Erro de publish** → Git não é alterado
+- **Failing tests** → Publication cancelled
+- **Build error** → Publication cancelled
+- **Versioning error** → Publication cancelled
+- **Publish error** → Git is not altered
 
-## Versionamento Semântico
+## Semantic Versioning
 
-- **patch**: Correções de bugs (2.2.1 → 2.2.2)
-- **minor**: Novas funcionalidades (2.2.1 → 2.3.0)
-- **major**: Mudanças breaking (2.2.1 → 3.0.0)
+- **patch**: Bug fixes (2.2.1 → 2.2.2)
+- **minor**: New features (2.2.1 → 2.3.0)
+- **major**: Breaking changes (2.2.1 → 3.0.0)
 
-## Configuração Git
+## Git Configuration
 
-Para funcionar corretamente, configure:
+To work correctly, configure:
 
 ```bash
-git config user.name "Seu Nome"
-git config user.email "seu.email@exemplo.com"
+git config user.name "Your Name"
+git config user.email "your.email@example.com"
 ```
 
-## Autenticação npm
+## npm Authentication
 
-Faça login no npm:
+Log in to npm:
 
 ```bash
 npm login
 ```
 
-## Exemplo de Uso
+## Usage Example
 
 ```bash
-# Desenvolvimento de nova feature
-npm run test:watch  # Durante desenvolvimento
-npm run test        # Validação final
-npm run publish:minor  # Publicar nova versão
+# New feature development
+npm run test:watch  # During development
+npm run test        # Final validation
+npm run publish:minor  # Publish new version
 ```

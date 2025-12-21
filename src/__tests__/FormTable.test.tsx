@@ -12,7 +12,7 @@ const mockConfig: FormTableConfig = {
       type: 'text',
       label: 'Nome',
       required: true,
-      validation: yup.string().required('Nome obrigatório')
+      validation: yup.string().required('Name is required')
     },
     {
       key: 'email',

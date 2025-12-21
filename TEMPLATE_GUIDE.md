@@ -1,22 +1,22 @@
-# 🎯 Guia para Usar este Template
+# Guide to Using this Template
 
-Este é um template completo para criação de componentes React reutilizáveis e publicáveis. Siga os passos abaixo para personalizar e criar seu próprio componente.
+This is a complete template for creating reusable and publishable React components. Follow the steps below to customize and create your own component.
 
-## 🚀 Início Rápido
+## Quick Start
 
-### 1. Clone o Template
+### 1. Clone the Template
 ```bash
-git clone <sua-url-do-template>
+git clone <your-template-url>
 cd react-component-template
 npm install
 ```
 
-### 2. Renomeie e Configure
-1. **Atualize package.json** com suas informações:
+### 2. Rename and Configure
+1. **Update package.json** with your information:
    - `name`: `@your-scope/your-component-name`
-   - `description`: Descrição do seu componente
-   - `repository`: URL do seu repositório
-   - `author`: Seu nome
+   - `description`: Your component description
+   - `repository`: Your repository URL
+   - `author`: Your name
 
 ### 3. Implemente seu Componente
 
@@ -48,20 +48,20 @@ Atualize `src/__tests__/YourComponent.test.tsx` com testes específicos.
 ```bash
 npm test                 # Executa testes
 npm run build           # Gera build
-cd example-app && npm start  # Testa no exemplo
+cd example-app && npm start  # Test in example
 ```
 
-## 📋 Checklist de Personalização
+## Customization Checklist
 
 - [ ] Atualizar `package.json` com suas informações
 - [ ] Implementar componente em `src/index.tsx`
 - [ ] Personalizar estilos em `src/index.css`
 - [ ] Atualizar testes em `src/__tests__/`
-- [ ] Modificar exemplo em `example-app/src/App.tsx`
+- [ ] Modify example in `example-app/src/App.tsx`
 - [ ] Atualizar `README.md` com documentação
 - [ ] Configurar repositório Git
 
-## 🎯 Exemplos de Uso do Template
+## Template Usage Examples
 
 ### Componente de Card
 ```tsx
@@ -94,7 +94,7 @@ interface InputProps {
 }
 ```
 
-## 🚀 Publicação
+## Publication
 
 ### Primeiro Build
 ```bash
@@ -126,18 +126,18 @@ npm run publish:patch  # ou minor/major
 - Use useCallback/useMemo apropriadamente
 
 ### Documentação
-- README claro com exemplos
+- Clear README with examples
 - Props bem documentadas  
-- Exemplos de uso variados
+- Varied usage examples
 
-## 🔧 Scripts Disponíveis
+## Available Scripts
 
 ```bash
 npm test              # Testes
 npm run test:watch    # Testes em modo watch
 npm run test:coverage # Cobertura de testes
 npm run build         # Build de produção
-npm run validate      # Validação completa
+npm run validate      # Complete validation
 npm run publish:patch # Publica versão patch
 npm run publish:minor # Publica versão minor
 npm run publish:major # Publica versão major

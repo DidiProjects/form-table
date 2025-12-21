@@ -1,7 +1,7 @@
 {
   "name": "@dspackages/form-table",
   "version": "1.0.0",
-  "description": "Gerenciador de formulário para tabelas com células editáveis, navegação por Tab, validação Yup e contexto",
+  "description": "Form manager for tables with editable cells, Tab navigation, Yup validation and context",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",

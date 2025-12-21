@@ -1,0 +1,5 @@
+- All responses must be in English
+- Do not add comments to code
+- Do not use emoticons or emojis
+- Be direct and concise
+- For running example-app use: cd example-app && npm start

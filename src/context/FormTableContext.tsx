@@ -250,14 +250,14 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
             schema = yup.string().email('Email inválido');
             break;
           case 'number':
-            schema = yup.number().typeError('Deve ser um número');
+            schema = yup.number().typeError('Must be a number');
             break;
           default:
             schema = yup.string();
         }
         
         if (cellConfig.required) {
-          schema = schema.required('Campo obrigatório');
+          schema = schema.required('Required field');
         }
       }
 
@@ -265,7 +265,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
       dispatch({ type: 'SET_CELL_ERROR', payload: { rowId, cellKey, error: undefined } });
       return true;
     } catch (error) {
-      const message = error instanceof yup.ValidationError ? error.message : 'Erro de validação';
+      const message = error instanceof yup.ValidationError ? error.message : 'Validation error';
       dispatch({ type: 'SET_CELL_ERROR', payload: { rowId, cellKey, error: message } });
       return false;
     }

@@ -1,94 +1,94 @@
-# Como usar o Template de Componente React
+# How to use the React Component Template
 
-## 1. Configuração Inicial
+## 1. Initial Setup
 
-### Clone ou faça download deste template
+### Clone or download this template
 ```bash
-git clone <url-do-seu-template>
+git clone <your-template-url>
 cd react-package-template
 ```
 
-### Instale as dependências
+### Install dependencies
 ```bash
 npm install
 ```
 
-## 2. Personalização do Template
+## 2. Template Customization
 
-### Atualize o package.json
+### Update package.json
 ```json
 {
   "name": "@your-scope/your-component-name",
   "version": "1.0.0",
-  "description": "Sua descrição aqui",
+  "description": "Your description here",
   "repository": {
     "url": "git+https://github.com/your-username/your-repo.git"
   },
-  "author": "Seu Nome"
+  "author": "Your Name"
 }
 ```
 
-### Implemente seu componente em src/index.tsx
+### Implement your component in src/index.tsx
 ```tsx
 import React from 'react';
 import { ComponentProps } from './utils';
 import './index.css';
 
-const SeuComponente = ({ ...props }: ComponentProps) => {
-  // Sua lógica aqui
+const YourComponent = ({ ...props }: ComponentProps) => {
+  // Your logic here
   return (
-    <div className="seu-componente">
-      {/* Seu JSX aqui */}
+    <div className="your-component">
+      {/* Your JSX here */}
     </div>
   );
 };
 
-export default SeuComponente;
+export default YourComponent;
 ```
 
-### Customize os estilos em src/index.css
+### Customize styles in src/index.css
 ```css
-.seu-componente {
-  /* Seus estilos aqui */
+.your-component {
+  /* Your styles here */
 }
 ```
 
-## 3. Desenvolvimento
+## 3. Development
 
-### Execute os testes
+### Run tests
 ```bash
-npm test                # Executa uma vez
-npm run test:watch      # Modo watch
-npm run test:coverage   # Com cobertura
+npm test                # Run once
+npm run test:watch      # Watch mode
+npm run test:coverage   # With coverage
 ```
 
-### Build o componente
+### Build the component
 ```bash
 npm run build
 ```
 
-## 4. Publicação
+## 4. Publishing
 
-### Configure seu npm
+### Configure your npm
 ```bash
 npm login
 ```
 
-### Publique o componente
+### Publish the component
 ```bash
-npm run publish:patch     # Para correções
-npm run publish:minor     # Para novas features  
-npm run publish:major     # Para mudanças breaking
+npm run publish:patch     # For fixes
+npm run publish:minor     # For new features  
+npm run publish:major     # For breaking changes
 ```
 
-## 5. Uso do Componente Publicado
+## 5. Using the Published Component
 
-### Instalação
+### Installation
 ```bash
 npm install @your-scope/your-component-name
 ```
 
-### Uso básico
+### Basic usage
 ```tsx
 import React from 'react';
 import YourComponent from '@your-scope/your-component-name';
@@ -96,12 +96,12 @@ import YourComponent from '@your-scope/your-component-name';
 function App() {
   return (
     <div>
-      <h1>Minha App</h1>
+      <h1>My App</h1>
       <YourComponent 
-        title="Exemplo"
-        onClick={() => console.log('Clicado!')}
+        title="Example"
+        onClick={() => console.log('Clicked!')}
       >
-        <p>Conteúdo do componente</p>
+        <p>Component content</p>
       </YourComponent>
     </div>
   );
@@ -110,16 +110,16 @@ function App() {
 export default App;
 ```
 
-## 6. Estrutura de Arquivos
+## 6. File Structure
 
 ```
 src/
-├── index.tsx              # Componente principal
-├── index.css              # Estilos
-├── utils/                 # Utilitários
+├── index.tsx              # Main component
+├── index.css              # Styles
+├── utils/                 # Utilities
 │   ├── index.ts          # Exports
-│   ├── helpers.ts         # Funções auxiliares
-│   └── __tests__/         # Testes dos utilitários
-└── __tests__/             # Testes do componente
+│   ├── helpers.ts         # Helper functions
+│   └── __tests__/         # Utility tests
+└── __tests__/             # Component tests
     └── YourComponent.test.tsx
 ```
