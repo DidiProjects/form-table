@@ -1,10 +1,9 @@
-import React, { createContext, useContext, useCallback, useReducer, useMemo } from 'react';
+import React, { createContext, useContext, useCallback, useReducer, useMemo, useRef } from 'react';
 import * as yup from 'yup';
 import { 
   TableData, 
   FormTableConfig, 
   FormTableContextType, 
-  CellData, 
   RowData 
 } from '../types';
 
@@ -155,9 +154,17 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
   };
 
   const [state, dispatch] = useReducer(formTableReducer, initialState);
+  
+  // Refs para evitar loops de dependência
+  const initializedRef = useRef(false);
+  const onDataChangeRef = useRef(onDataChange);
+  onDataChangeRef.current = onDataChange;
 
-  // Initialize data from props
+  // Initialize data from props - apenas uma vez no mount
   React.useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+    
     const tableData: TableData = {};
     
     // Convert initial data to internal format
@@ -190,15 +197,32 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
     }
 
     dispatch({ type: 'INITIALIZE_DATA', payload: { data: tableData } });
-  }, [config, initialData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Notify parent of data changes
+  // Notificar mudanças de dados para o parent (usando ref para evitar loop)
+  const prevDataRef = useRef<string>('');
   React.useEffect(() => {
-    if (onDataChange) {
-      const cleanData = getAllData();
-      onDataChange(cleanData);
+    // Só notifica se há dados e se realmente mudou
+    if (Object.keys(state.data).length === 0) return;
+    
+    const currentDataJson = JSON.stringify(state.data);
+    if (currentDataJson === prevDataRef.current) return;
+    
+    prevDataRef.current = currentDataJson;
+    
+    if (onDataChangeRef.current) {
+      // Extrair valores limpos
+      const cleanData: Record<string, Record<string, any>> = {};
+      Object.keys(state.data).forEach(rowId => {
+        cleanData[rowId] = {};
+        Object.entries(state.data[rowId] || {}).forEach(([cellKey, cellData]: [string, any]) => {
+          cleanData[rowId][cellKey] = cellData?.value;
+        });
+      });
+      onDataChangeRef.current(cleanData);
     }
-  }, [state.data, onDataChange]);
+  }, [state.data]);
 
   // Actions
   const updateCellValue = useCallback((rowId: string, cellKey: string, value: any) => {
