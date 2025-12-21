@@ -1,4 +1,4 @@
-- All responses must be in English
+- All writing in the project must be in English
 - Do not add comments to code
 - Do not use emoticons or emojis
 - Be direct and concise
