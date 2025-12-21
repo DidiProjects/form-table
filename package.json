@@ -2,16 +2,25 @@
   "name": "@dspackages/form-table",
   "version": "1.0.0",
   "description": "Gerenciador de formulário para tabelas com células editáveis, navegação por Tab, validação Yup e contexto",
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./dist/index.css": "./dist/index.css"
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.cjs.json && npm run build:css",
+    "build": "tsc --project tsconfig.esm.json && npm run build:css",
     "build:css": "powershell -Command \"Copy-Item src/index.css dist/index.css\"",
     "prepublishOnly": "npm run validate && npm run build",
     "validate": "npm run test",
