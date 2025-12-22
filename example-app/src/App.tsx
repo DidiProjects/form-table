@@ -7,7 +7,6 @@ import './App.css';
 function App() {
   const [tableData, setTableData] = useState<Record<string, Record<string, any>>>({});
 
-  // Table configuration
   const tableConfig: FormTableConfig = {
     columns: [
       {

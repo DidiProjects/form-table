@@ -1,7 +1,7 @@
 import React from 'react';
 export { FormTable } from './components/FormTable';
 export { EditableCell } from './components/EditableCell';
-export { FormTableProvider, useFormTable, useFormTableCell } from './context/FormTableContext';
+export { FormTableProvider, useFormTable, } from './context/FormTableContext';
 export * from './types';
 import './index.css';
 

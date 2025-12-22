@@ -1,44 +1,34 @@
 import React from 'react';
-import * as yup from 'yup';
-import { useField } from '../context/FieldContext';
+import { useFormTable } from '../context/FormTableContext';
 
 interface EditableCellProps {
   field: string;
   type?: 'text' | 'number' | 'email';
-  validation?: yup.AnySchema;
   placeholder?: string;
 }
 
 export const EditableCell: React.FC<EditableCellProps> = ({
   field,
   type = 'text',
-  validation,
   placeholder
 }) => {
-  const { value, error, setValue, validate } = useField(field);
+  const { data, update } = useFormTable();
+  const fieldData = data[field];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = type === 'number' ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value;
-    setValue(newValue);
-  };
-
-  const handleBlur = () => {
-    if (validation) {
-      validate(validation);
-    }
+    const newValue = type === 'number' ? (e.target.value === '' ? null : Number(e.target.value)) : e.target.value;
+    update(field, newValue);
   };
 
   return (
-    <td className={`editable-cell ${error ? 'has-error' : ''}`}>
+    <td className="editable-cell">
       <input
         type={type}
-        value={value}
+        value={fieldData?.value ?? ''}
         onChange={handleChange}
-        onBlur={handleBlur}
         placeholder={placeholder}
         className="cell-input"
       />
-      {error && <span className="cell-error">{error}</span>}
     </td>
   );
 };

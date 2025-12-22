@@ -1,7 +1,8 @@
 import React from 'react';
 import * as yup from 'yup';
-import { FieldProvider } from '../context/FieldContext';
+import { FormTableProvider } from '../context/FormTableContext';
 import { EditableCell } from './EditableCell';
+import { TFormData } from '../types';
 
 interface Column {
   field: string;
@@ -13,12 +14,12 @@ interface Column {
 
 interface FormTableProps {
   columns: Column[];
-  initialValues?: Record<string, any>;
+  initialValues?: TFormData;
 }
 
-export const FormTable: React.FC<FormTableProps> = ({ columns, initialValues = {} }) => {
+export const FormTable: React.FC<FormTableProps> = ({ columns, initialValues }) => {
   return (
-    <FieldProvider initialValues={initialValues}>
+    <FormTableProvider defaultData={initialValues}>
       <table className="form-table">
         <thead>
           <tr>
@@ -34,13 +35,12 @@ export const FormTable: React.FC<FormTableProps> = ({ columns, initialValues = {
                 key={col.field}
                 field={col.field}
                 type={col.type}
-                validation={col.validation}
                 placeholder={col.placeholder}
               />
             ))}
           </tr>
         </tbody>
       </table>
-    </FieldProvider>
+    </FormTableProvider>
   );
 };
