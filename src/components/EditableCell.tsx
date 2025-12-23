@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useField } from '../context/FormTableContext';
 
 interface EditableCellProps {
+  formId: string;
   field: string;
   type?: 'text' | 'number' | 'email' | 'select';
   placeholder?: string;
@@ -9,13 +10,14 @@ interface EditableCellProps {
 }
 
 export const EditableCell: React.FC<EditableCellProps> = ({
+  formId,
   field,
   type = 'text',
   placeholder,
   options
 }) => {
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
-  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, isLastField } = useField(field);
+  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, isLastField } = useField(formId, field);
 
   useEffect(() => {
     if (isActive && inputRef.current) {

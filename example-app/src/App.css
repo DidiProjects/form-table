@@ -34,6 +34,15 @@
   gap: 40px;
 }
 
+.demo-row {
+  display: flex;
+  gap: 24px;
+}
+
+.demo-row .demo-section {
+  flex: 1;
+}
+
 .demo-section {
   background: #fff;
   border-radius: 12px;
@@ -42,7 +51,7 @@
 }
 
 .demo-section h2 {
-  margin: 0 0 8px 0;
+  margin: 0 0 16px 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: #495057;

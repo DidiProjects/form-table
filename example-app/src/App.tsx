@@ -1,13 +1,16 @@
 import React from 'react';
-import { Column, FormTable } from '@dspackages/form-table';
+import { Column, FormConfig, FormTableProvider, EditableCell } from '@dspackages/form-table';
 import '@dspackages/form-table/dist/index.css';
 import * as yup from 'yup';
 import './App.css';
 
-type TMockData = {
+type TPersonalData = {
   name: string;
   email: string;
   age: number;
+}
+
+type TJobData = {
   position: string;
   salary: number;
   notes: string | undefined;
@@ -21,92 +24,117 @@ const positionOptions = [
   { value: 'qa', label: 'QA Engineer' },
 ];
 
-const ColumnConfigs: Column[] = [
-  {
-    field: 'name',
-    type: 'text',
-    label: 'Full Name',
-    placeholder: 'Enter full name',
-  },
-  {
-    field: 'email',
-    type: 'email',
-    label: 'Email',
-    placeholder: 'Enter email',
-  },
-  {
-    field: 'age',
-    type: 'number',
-    label: 'Age',
-    placeholder: 'Enter age',
-  },
-  {
-    field: 'position',
-    type: 'select',
-    label: 'Position',
-    placeholder: 'Select position',
-    options: positionOptions,
-  },
-  {
-    field: 'salary',
-    type: 'number',
-    label: 'Salary ($)',
-    placeholder: 'Enter salary',
-  },
-  {
-    field: 'notes',
-    type: 'text',
-    label: 'Notes',
-    placeholder: 'Enter notes',
-  }
+const personalColumns: Column[] = [
+  { field: 'name', type: 'text', label: 'Full Name', placeholder: 'Enter full name' },
+  { field: 'email', type: 'email', label: 'Email', placeholder: 'Enter email' },
+  { field: 'age', type: 'number', label: 'Age', placeholder: 'Enter age' },
 ];
 
-const initialData: TMockData = {
-  name: 'John Silva',
-  email: 'john@example.com',
-  age: 30,
-  position: 'dev',
-  salary: 5000,
-  notes: 'Experienced developer'
-};
+const jobColumns: Column[] = [
+  { field: 'position', type: 'select', label: 'Position', placeholder: 'Select position', options: positionOptions },
+  { field: 'salary', type: 'number', label: 'Salary ($)', placeholder: 'Enter salary' },
+  { field: 'notes', type: 'text', label: 'Notes', placeholder: 'Enter notes' },
+];
 
-const userSchema = yup.object().shape({
+const personalSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   age: yup.number().min(18, 'Must be at least 18').required('Age is required'),
-  position: yup.string().required('Position is required'),
-  salary: yup.number().min(0, 'Salary must be positive').required('Salary is required'),
-  notes: yup.string()
 });
 
+const jobSchema = yup.object().shape({
+  position: yup.string().required('Position is required'),
+  salary: yup.number().min(0, 'Salary must be positive').required('Salary is required'),
+  notes: yup.string(),
+});
+
+const handlePersonalSubmit = (values: TPersonalData) => {
+  console.log('Personal form submitted:', values);
+  alert('Personal form submitted!\n\n' + JSON.stringify(values, null, 2));
+};
+
+const handleJobSubmit = (values: TJobData) => {
+  console.log('Job form submitted:', values);
+  alert('Job form submitted!\n\n' + JSON.stringify(values, null, 2));
+};
+
+const forms: FormConfig[] = [
+  { 
+    id: 'personal', 
+    initialData: { name: 'John Silva', email: 'john@example.com', age: 30 }, 
+    schema: personalSchema,
+    onSubmit: handlePersonalSubmit
+  },
+  { 
+    id: 'job', 
+    initialData: { position: 'dev', salary: 5000, notes: 'Experienced developer' }, 
+    schema: jobSchema,
+    onSubmit: handleJobSubmit
+  },
+];
+
+const navigationFields = [
+  'personal.name',
+  'personal.email', 
+  'personal.age',
+  'job.position',
+  'job.salary',
+  'job.notes',
+];
+
 function App() {
-  const handleSubmit = (values: TMockData) => {
-    console.log('Form submitted:', values);
-    alert('Form submitted!\n\n' + JSON.stringify(values, null, 2));
-  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>FormTable - Table Form Manager</h1>
+        <h1>FormTable - Multi-Form Support</h1>
         <p>
-          Use Tab to navigate between fields. Press Enter on the last field to submit.
+          Tab navigates within each form. Press Enter on the last field to submit that form.
         </p>
       </header>
 
       <div className="app-content">
-        <div className="demo-section">
-          <h2>Employee Registration</h2>
-          <p className="demo-hint">
-            Navigation: Tab (next) | Shift+Tab (previous) | Enter (next or submit on last field)
-          </p>
-          <FormTable<TMockData>
-            columns={ColumnConfigs}
-            initialData={initialData}
-            schema={userSchema}
-            onSubmit={handleSubmit}
-          />
-        </div>
+        <FormTableProvider
+          forms={forms}
+          navigationFields={navigationFields}
+          debounceMs={300}
+        >
+          <div className="demo-section">
+            <h2>Employee Registration</h2>
+            <table className="form-table">
+              <thead>
+                <tr>
+                  {personalColumns.map(col => <th key={col.field}>{col.label}</th>)}
+                  {jobColumns.map(col => <th key={col.field}>{col.label}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {personalColumns.map(col => (
+                    <EditableCell
+                      key={col.field}
+                      formId="personal"
+                      field={col.field}
+                      type={col.type}
+                      placeholder={col.placeholder}
+                      options={col.options}
+                    />
+                  ))}
+                  {jobColumns.map(col => (
+                    <EditableCell
+                      key={col.field}
+                      formId="job"
+                      field={col.field}
+                      type={col.type}
+                      placeholder={col.placeholder}
+                      options={col.options}
+                    />
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </FormTableProvider>
       </div>
     </div>
   );

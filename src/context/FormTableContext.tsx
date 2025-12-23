@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useCallback, useRef, useSyncExternalStore } from 'react';
 import * as yup from 'yup';
-import { FieldsState, FieldState } from '../types';
+import { FieldsState, FieldState, FormsState, FormConfig } from '../types';
 
 type Listener = () => void;
 
@@ -10,11 +10,11 @@ interface NavigationState {
 }
 
 interface FormTableStore {
-  getState: () => FieldsState;
+  getState: () => FormsState;
   getNavigation: () => NavigationState;
-  setValue: (field: string, value: any) => void;
+  setValue: (formId: string, field: string, value: any) => void;
   setActiveField: (field: string | null) => void;
-  validateFieldSync: (field: string) => Promise<boolean>;
+  validateFieldSync: (formId: string, field: string) => Promise<boolean>;
   nextField: () => Promise<void>;
   previousField: () => Promise<void>;
   submit: () => Promise<void>;
@@ -22,31 +22,35 @@ interface FormTableStore {
   subscribeNavigation: (listener: Listener) => () => void;
 }
 
-interface FormTableProviderProps<T extends Record<string, any>> {
+interface FormTableProviderProps {
   children: React.ReactNode;
-  initialData: T;
-  schema: yup.ObjectSchema<T>;
+  forms: FormConfig[];
   debounceMs?: number;
   navigationFields?: string[];
-  onSubmit?: (values: T) => void;
 }
 
 const FormTableContext = createContext<FormTableStore | null>(null);
 
-export const FormTableProvider = <T extends Record<string, any>>({
+export const FormTableProvider: React.FC<FormTableProviderProps> = ({
   children,
-  initialData,
-  schema,
+  forms,
   debounceMs = 500,
-  navigationFields = [],
-  onSubmit
-}: FormTableProviderProps<T>) => {
+  navigationFields = []
+}) => {
   const storeRef = useRef<FormTableStore | null>(null);
 
   if (!storeRef.current) {
-    let state: FieldsState = {};
-    Object.entries(initialData).forEach(([key, value]) => {
-      state[key] = { value, error: undefined };
+    let state: FormsState = {};
+    const schemas = new Map<string, yup.ObjectSchema<any>>();
+    const submitHandlers = new Map<string, ((values: any) => void) | undefined>();
+
+    forms.forEach(form => {
+      state[form.id] = {};
+      schemas.set(form.id, form.schema);
+      submitHandlers.set(form.id, form.onSubmit);
+      Object.entries(form.initialData).forEach(([key, value]) => {
+        state[form.id][key] = { value, error: undefined };
+      });
     });
 
     let navigation: NavigationState = {
@@ -79,10 +83,18 @@ export const FormTableProvider = <T extends Record<string, any>>({
       navigationListeners.forEach((listener) => listener());
     };
 
-    const validateField = async (field: string, value: any): Promise<string | undefined> => {
+    const parseFieldPath = (fieldPath: string): { formId: string; field: string } => {
+      const [formId, field] = fieldPath.split('.');
+      return { formId, field };
+    };
+
+    const validateField = async (formId: string, field: string, value: any): Promise<string | undefined> => {
+      const schema = schemas.get(formId);
+      if (!schema) return 'Form not found';
+
       try {
         const currentValues: Record<string, any> = {};
-        Object.entries(state).forEach(([key, fieldState]) => {
+        Object.entries(state[formId] || {}).forEach(([key, fieldState]) => {
           currentValues[key] = fieldState.value;
         });
         await schema.validateAt(field, { ...currentValues, [field]: value });
@@ -95,32 +107,40 @@ export const FormTableProvider = <T extends Record<string, any>>({
       }
     };
 
-    const setValue = (field: string, value: any) => {
+    const setValue = (formId: string, field: string, value: any) => {
+      const timerKey = `${formId}.${field}`;
+
       state = {
         ...state,
-        [field]: { ...state[field], value }
+        [formId]: {
+          ...state[formId],
+          [field]: { ...state[formId]?.[field], value }
+        }
       };
       notify();
 
-      const existingTimer = debounceTimers.get(field);
+      const existingTimer = debounceTimers.get(timerKey);
       if (existingTimer) {
         clearTimeout(existingTimer);
       }
 
       const timer = setTimeout(() => {
-        debounceTimers.delete(field);
-        validateField(field, value).then(error => {
-          if (state[field]?.value === value) {
+        debounceTimers.delete(timerKey);
+        validateField(formId, field, value).then(error => {
+          if (state[formId]?.[field]?.value === value) {
             state = {
               ...state,
-              [field]: { ...state[field], error }
+              [formId]: {
+                ...state[formId],
+                [field]: { ...state[formId]?.[field], error }
+              }
             };
             notify();
           }
         });
       }, debounceMs);
 
-      debounceTimers.set(field, timer);
+      debounceTimers.set(timerKey, timer);
     };
 
     const setActiveField = (field: string | null) => {
@@ -128,28 +148,27 @@ export const FormTableProvider = <T extends Record<string, any>>({
       notifyNavigation();
     };
 
-    const validateFieldSync = async (field: string): Promise<boolean> => {
-      const existingTimer = debounceTimers.get(field);
+    const validateFieldSync = async (formId: string, field: string): Promise<boolean> => {
+      const timerKey = `${formId}.${field}`;
+      const existingTimer = debounceTimers.get(timerKey);
       if (existingTimer) {
         clearTimeout(existingTimer);
-        debounceTimers.delete(field);
+        debounceTimers.delete(timerKey);
       }
 
-      const value = state[field]?.value;
-      const error = await validateField(field, value);
+      const value = state[formId]?.[field]?.value;
+      const error = await validateField(formId, field, value);
       
       state = {
         ...state,
-        [field]: { ...state[field], error }
+        [formId]: {
+          ...state[formId],
+          [field]: { ...state[formId]?.[field], error }
+        }
       };
       notify();
 
       return !error;
-    };
-
-    const hasFieldError = (field: string | null): boolean => {
-      if (!field) return false;
-      return !!state[field]?.error;
     };
 
     const nextField = async () => {
@@ -157,14 +176,17 @@ export const FormTableProvider = <T extends Record<string, any>>({
       if (fields.length === 0) return;
 
       if (activeField) {
-        const isValid = await validateFieldSync(activeField);
+        const { formId, field } = parseFieldPath(activeField);
+        const isValid = await validateFieldSync(formId, field);
         if (!isValid) return;
+
+        const formFields = fields.filter(f => f.startsWith(`${formId}.`));
+        const currentIndex = formFields.indexOf(activeField);
+        const nextIndex = (currentIndex + 1) % formFields.length;
+        setActiveField(formFields[nextIndex]);
+      } else {
+        setActiveField(fields[0]);
       }
-
-      const currentIndex = activeField ? fields.indexOf(activeField) : -1;
-      const nextIndex = (currentIndex + 1) % fields.length;
-
-      setActiveField(fields[nextIndex]);
     };
 
     const previousField = async () => {
@@ -172,32 +194,43 @@ export const FormTableProvider = <T extends Record<string, any>>({
       if (fields.length === 0) return;
 
       if (activeField) {
-        const isValid = await validateFieldSync(activeField);
+        const { formId, field } = parseFieldPath(activeField);
+        const isValid = await validateFieldSync(formId, field);
         if (!isValid) return;
+
+        const formFields = fields.filter(f => f.startsWith(`${formId}.`));
+        const currentIndex = formFields.indexOf(activeField);
+        const prevIndex = (currentIndex - 1 + formFields.length) % formFields.length;
+        setActiveField(formFields[prevIndex]);
+      } else {
+        setActiveField(fields[0]);
       }
-
-      const currentIndex = activeField ? fields.indexOf(activeField) : 0;
-      const prevIndex = (currentIndex - 1 + fields.length) % fields.length;
-
-      setActiveField(fields[prevIndex]);
     };
 
     const submit = async () => {
-      if (!onSubmit) return;
+      const { activeField, fields } = navigation;
+      if (!activeField) return;
 
-      for (const field of navigation.fields) {
-        const isValid = await validateFieldSync(field);
+      const { formId } = parseFieldPath(activeField);
+      const formFields = fields.filter(f => f.startsWith(`${formId}.`));
+
+      for (const fieldPath of formFields) {
+        const { formId: fId, field } = parseFieldPath(fieldPath);
+        const isValid = await validateFieldSync(fId, field);
         if (!isValid) {
-          setActiveField(field);
+          setActiveField(fieldPath);
           return;
         }
       }
 
+      const onSubmit = submitHandlers.get(formId);
+      if (!onSubmit) return;
+
       const values: Record<string, any> = {};
-      Object.entries(state).forEach(([key, fieldState]) => {
-        values[key] = fieldState.value;
+      Object.entries(state[formId] || {}).forEach(([fieldName, fieldState]) => {
+        values[fieldName] = fieldState.value;
       });
-      onSubmit(values as T);
+      onSubmit(values);
     };
 
     storeRef.current = {
@@ -231,11 +264,11 @@ const useStore = (): FormTableStore => {
 
 export const useFormTable = () => {
   const store = useStore();
-  const fields = useSyncExternalStore(store.subscribe, store.getState);
-  return { fields, setValue: store.setValue };
+  const state = useSyncExternalStore(store.subscribe, store.getState);
+  return { state, setValue: store.setValue };
 };
 
-export const useSelectorContext = <T,>(selector: (state: FieldsState) => T): T => {
+export const useSelectorContext = <T,>(selector: (state: FormsState) => T): T => {
   const store = useStore();
   return useSyncExternalStore(
     store.subscribe,
@@ -258,29 +291,35 @@ export const useNavigation = () => {
   };
 };
 
-export const useField = (field: string) => {
+export const useField = (formId: string, field: string) => {
   const store = useStore();
+  const fieldPath = `${formId}.${field}`;
   
   const fieldState = useSelectorContext(
-    useCallback((state: FieldsState): FieldState => state[field] ?? { value: '', error: undefined }, [field])
+    useCallback((state: FormsState): FieldState => 
+      state[formId]?.[field] ?? { value: '', error: undefined }, 
+    [formId, field])
   );
 
   const navigation = useSyncExternalStore(store.subscribeNavigation, store.getNavigation);
-  const isActive = navigation.activeField === field;
+  const isActive = navigation.activeField === fieldPath;
+  
+  const formFields = navigation.fields.filter(f => f.startsWith(`${formId}.`));
+  const isLastField = fieldPath === formFields[formFields.length - 1];
 
   const setValue = useCallback((value: any) => {
-    store.setValue(field, value);
-  }, [store, field]);
+    store.setValue(formId, field, value);
+  }, [store, formId, field]);
 
   return {
     value: fieldState.value,
     error: fieldState.error,
     setValue,
     isActive,
-    setActive: () => store.setActiveField(field),
+    setActive: () => store.setActiveField(fieldPath),
     nextField: store.nextField,
     previousField: store.previousField,
     submit: store.submit,
-    isLastField: field === navigation.fields[navigation.fields.length - 1]
+    isLastField
   };
 };
