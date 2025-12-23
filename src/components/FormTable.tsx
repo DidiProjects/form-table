@@ -2,24 +2,21 @@ import React from 'react';
 import * as yup from 'yup';
 import { FormTableProvider } from '../context/FormTableContext';
 import { EditableCell } from './EditableCell';
-import { TFormData } from '../types';
+import { Column } from '../types';
 
-interface Column {
-  field: string;
-  label: string;
-  type?: 'text' | 'number' | 'email';
-  validation?: yup.AnySchema;
-  placeholder?: string;
-}
-
-interface FormTableProps {
+interface FormTableProps<T extends Record<string, any>> {
   columns: Column[];
-  initialValues?: TFormData;
+  initialData: T;
+  schema: yup.ObjectSchema<T>;
 }
 
-export const FormTable: React.FC<FormTableProps> = ({ columns, initialValues }) => {
+export const FormTable = <T extends Record<string, any>>({ 
+  columns, 
+  initialData, 
+  schema 
+}: FormTableProps<T>) => {
   return (
-    <FormTableProvider defaultData={initialValues}>
+    <FormTableProvider initialData={initialData} schema={schema}>
       <table className="form-table">
         <thead>
           <tr>
@@ -36,6 +33,7 @@ export const FormTable: React.FC<FormTableProps> = ({ columns, initialValues }) 
                 field={col.field}
                 type={col.type}
                 placeholder={col.placeholder}
+                options={col.options}
               />
             ))}
           </tr>

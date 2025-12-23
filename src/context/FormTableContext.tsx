@@ -1,67 +1,75 @@
-import React, { createContext, useContext, useCallback, useReducer, useMemo, useRef, useState } from 'react';
+import React, { createContext, useContext, useCallback, useMemo, useState } from 'react';
 import * as yup from 'yup';
+import { FieldsState } from '../types';
 
 interface FormTableContextType {
-  data: TFormData;
-  update: (fieldKey: string, value: string | number | null) => void;
+  fields: FieldsState;
+  setValue: (field: string, value: any) => void;
+  errors: Record<string, string | undefined>;
 }
 
-type TFormData = {
-  [fieldKey: string]: {
-    validation: yup.Schema<any> | null;
-    value: string | number | null;
-    fieldName: string;
-    active: boolean;
-  };
-}
-
-type TValues = {
-  [fieldKey: string]: {
-    value: string | number | null;
-    validation?: yup.Schema<any> | null;
-  }
+interface FormTableProviderProps<T extends Record<string, any>> {
+  children: React.ReactNode;
+  initialData: T;
+  schema: yup.ObjectSchema<T>;
 }
 
 const FormTableContext = createContext<FormTableContextType | null>(null);
 
-interface FormTableProviderProps {
-  children: React.ReactNode;
-  defaultData?: TValues;
-}
-
-const getDefaultState = (defaultData?: TValues): TFormData => {
-  const state: TFormData = {};
-  if (defaultData) {
-    Object.keys(defaultData).forEach((key) => {
-      state[key] = {
-        validation: defaultData[key].validation || null,
-        value: defaultData[key].value,
-        fieldName: key,
-        active: false,
-      }
-    });
-  }
-  return state;
-};
-
-
-export const FormTableProvider: React.FC<FormTableProviderProps> = ({
+export const FormTableProvider = <T extends Record<string, any>>({
   children,
-  defaultData,
-}) => {
-  const [data, setData] = useState<TFormData>(getDefaultState(defaultData));
-  
-  const updateValue = useCallback((fieldKey: string, value: string | number | null) => {
-    setData((prevData) => ({
-      ...prevData,
-      [fieldKey]: {
-        ...prevData[fieldKey],
-        value,
-      },
-    }));
-  }, []);
+  initialData,
+  schema
+}: FormTableProviderProps<T>) => {
+  const [fields, setFields] = useState<FieldsState>(() => {
+    const state: FieldsState = {};
+    Object.entries(initialData).forEach(([key, value]) => {
+      state[key] = { value, error: undefined };
+    });
+    return state;
+  });
 
-  const contextValue = useMemo(() => ({ data, update: updateValue }), [data, updateValue]);
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+
+  const validateField = useCallback(async (field: string, value: any) => {
+    try {
+      await schema.validateAt(field, { ...getCurrentValues(), [field]: value });
+      return undefined;
+    } catch (err) {
+      if (err instanceof yup.ValidationError) {
+        return err.message;
+      }
+      return 'Validation error';
+    }
+
+    function getCurrentValues() {
+      const values: Record<string, any> = {};
+      Object.entries(fields).forEach(([key, fieldState]) => {
+        values[key] = fieldState.value;
+      });
+      return values;
+    }
+  }, [schema, fields]);
+
+  const setValue = useCallback(async (field: string, value: any) => {
+    const error = await validateField(field, value);
+    
+    setFields((prev) => ({
+      ...prev,
+      [field]: { value, error }
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: error
+    }));
+  }, [validateField]);
+
+  const contextValue = useMemo((): FormTableContextType => ({
+    fields,
+    setValue,
+    errors
+  }), [fields, setValue, errors]);
 
   return (
     <FormTableContext.Provider value={contextValue}>
@@ -76,4 +84,14 @@ export const useFormTable = (): FormTableContextType => {
     throw new Error('useFormTable must be used within a FormTableProvider');
   }
   return context;
+};
+
+export const useField = (field: string) => {
+  const { fields, setValue, errors } = useFormTable();
+
+  return useMemo(() => ({
+    value: fields[field]?.value ?? '',
+    error: errors[field],
+    setValue: (value: any) => setValue(field, value)
+  }), [fields, field, setValue, errors]);
 };
