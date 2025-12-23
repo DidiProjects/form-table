@@ -162,11 +162,9 @@ export const FormTableProvider = <T extends Record<string, any>>({
       }
 
       const currentIndex = activeField ? fields.indexOf(activeField) : -1;
-      const nextIndex = currentIndex + 1;
+      const nextIndex = (currentIndex + 1) % fields.length;
 
-      if (nextIndex < fields.length) {
-        setActiveField(fields[nextIndex]);
-      }
+      setActiveField(fields[nextIndex]);
     };
 
     const previousField = async () => {
@@ -178,12 +176,10 @@ export const FormTableProvider = <T extends Record<string, any>>({
         if (!isValid) return;
       }
 
-      const currentIndex = activeField ? fields.indexOf(activeField) : fields.length;
-      const prevIndex = currentIndex - 1;
+      const currentIndex = activeField ? fields.indexOf(activeField) : 0;
+      const prevIndex = (currentIndex - 1 + fields.length) % fields.length;
 
-      if (prevIndex >= 0) {
-        setActiveField(fields[prevIndex]);
-      }
+      setActiveField(fields[prevIndex]);
     };
 
     const submit = async () => {
