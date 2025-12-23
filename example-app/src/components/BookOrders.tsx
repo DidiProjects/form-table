@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, FormSchemas, FormSubmitHandlers, FormTableProvider, EditableCell } from '@dspackages/form-table';
+import { Column, FormSchemas, FormSubmitHandlers, FormTableProvider, EditableCell, useSelectorContext } from '@dspackages/form-table';
 import * as yup from 'yup';
 
 type TOrderData = {
@@ -42,6 +42,24 @@ const schemas: FormSchemas = {
   }),
 };
 
+interface VolumeCellProps {
+  formId: 'buy' | 'sell';
+}
+
+const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
+  const volume = useSelectorContext(state => {
+    const quantity = state[formId]?.quantity?.value || 0;
+    const price = state[formId]?.price?.value || 0;
+    return quantity * price;
+  });
+
+  return (
+    <td className={`volume-cell volume-${formId}`}>
+      {volume.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+    </td>
+  );
+};
+
 interface StockRowProps {
   stock: Stock;
 }
@@ -73,6 +91,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
     >
       <tr>
         <td className="ticker-cell">{stock.ticker}</td>
+        <VolumeCell formId="buy" />
         {buyColumns.map(col => (
           <EditableCell
             key={`buy-${col.field}`}
@@ -91,6 +110,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
             placeholder={col.placeholder}
           />
         ))}
+        <VolumeCell formId="sell" />
       </tr>
     </FormTableProvider>
   );
@@ -107,16 +127,18 @@ export const BookOrders: React.FC = () => {
         <thead>
           <tr>
             <th rowSpan={2} className="ticker-header">Ticker</th>
-            <th colSpan={buyColumns.length} className="group-header buy-header">Buy</th>
-            <th colSpan={sellColumns.length} className="group-header sell-header">Sell</th>
+            <th colSpan={buyColumns.length + 1} className="group-header buy-header">Buy</th>
+            <th colSpan={sellColumns.length + 1} className="group-header sell-header">Sell</th>
           </tr>
           <tr>
+            <th className="volume-header">Volume</th>
             {buyColumns.map(col => (
               <th key={`buy-${col.field}`}>{col.label}</th>
             ))}
             {sellColumns.map(col => (
               <th key={`sell-${col.field}`}>{col.label}</th>
             ))}
+            <th className="volume-header">Volume</th>
           </tr>
         </thead>
         <tbody>
