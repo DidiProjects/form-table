@@ -27,8 +27,8 @@ const buyColumns: Column[] = [
 ];
 
 const sellColumns: Column[] = [
-  { formId: 'sell', field: 'quantity', type: 'number', label: 'Quantity', placeholder: '0' },
   { formId: 'sell', field: 'price', type: 'number', label: 'Price', placeholder: '0.00' },
+  { formId: 'sell', field: 'quantity', type: 'number', label: 'Quantity', placeholder: '0' },
 ];
 
 const schemas: FormSchemas = {
@@ -107,14 +107,16 @@ export const BookOrders: React.FC = () => {
         <thead>
           <tr>
             <th rowSpan={2} className="ticker-header">Ticker</th>
-            <th colSpan={2} className="group-header buy-header">Buy</th>
-            <th colSpan={2} className="group-header sell-header">Sell</th>
+            <th colSpan={buyColumns.length} className="group-header buy-header">Buy</th>
+            <th colSpan={sellColumns.length} className="group-header sell-header">Sell</th>
           </tr>
           <tr>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Price</th>
+            {buyColumns.map(col => (
+              <th key={`buy-${col.field}`}>{col.label}</th>
+            ))}
+            {sellColumns.map(col => (
+              <th key={`sell-${col.field}`}>{col.label}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
