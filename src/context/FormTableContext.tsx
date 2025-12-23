@@ -60,13 +60,22 @@ export const FormTableProvider = <T extends Record<string, any>>({
       }
     };
 
-    const setValue = async (field: string, value: any) => {
-      const error = await validateField(field, value);
+    const setValue = (field: string, value: any) => {
       state = {
         ...state,
-        [field]: { value, error }
+        [field]: { ...state[field], value }
       };
       notify();
+
+      validateField(field, value).then(error => {
+        if (state[field]?.value === value) {
+          state = {
+            ...state,
+            [field]: { ...state[field], error }
+          };
+          notify();
+        }
+      });
     };
 
     storeRef.current = { getState, setValue, subscribe };
