@@ -1,11 +1,13 @@
-import React, { createContext, useContext, useCallback, useMemo, useState } from 'react';
+import React, { createContext, useContext, useCallback, useRef, useSyncExternalStore } from 'react';
 import * as yup from 'yup';
-import { FieldsState } from '../types';
+import { FieldsState, FieldState } from '../types';
 
-interface FormTableContextType {
-  fields: FieldsState;
+type Listener = () => void;
+
+interface FormTableStore {
+  getState: () => FieldsState;
   setValue: (field: string, value: any) => void;
-  errors: Record<string, string | undefined>;
+  subscribe: (listener: Listener) => () => void;
 }
 
 interface FormTableProviderProps<T extends Record<string, any>> {
@@ -14,84 +16,105 @@ interface FormTableProviderProps<T extends Record<string, any>> {
   schema: yup.ObjectSchema<T>;
 }
 
-const FormTableContext = createContext<FormTableContextType | null>(null);
+const FormTableContext = createContext<FormTableStore | null>(null);
 
 export const FormTableProvider = <T extends Record<string, any>>({
   children,
   initialData,
   schema
 }: FormTableProviderProps<T>) => {
-  const [fields, setFields] = useState<FieldsState>(() => {
-    const state: FieldsState = {};
+  const storeRef = useRef<FormTableStore | null>(null);
+
+  if (!storeRef.current) {
+    let state: FieldsState = {};
     Object.entries(initialData).forEach(([key, value]) => {
       state[key] = { value, error: undefined };
     });
-    return state;
-  });
 
-  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+    const listeners = new Set<Listener>();
 
-  const validateField = useCallback(async (field: string, value: any) => {
-    try {
-      await schema.validateAt(field, { ...getCurrentValues(), [field]: value });
-      return undefined;
-    } catch (err) {
-      if (err instanceof yup.ValidationError) {
-        return err.message;
+    const getState = () => state;
+
+    const subscribe = (listener: Listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    };
+
+    const notify = () => {
+      listeners.forEach((listener) => listener());
+    };
+
+    const validateField = async (field: string, value: any): Promise<string | undefined> => {
+      try {
+        const currentValues: Record<string, any> = {};
+        Object.entries(state).forEach(([key, fieldState]) => {
+          currentValues[key] = fieldState.value;
+        });
+        await schema.validateAt(field, { ...currentValues, [field]: value });
+        return undefined;
+      } catch (err) {
+        if (err instanceof yup.ValidationError) {
+          return err.message;
+        }
+        return 'Validation error';
       }
-      return 'Validation error';
-    }
+    };
 
-    function getCurrentValues() {
-      const values: Record<string, any> = {};
-      Object.entries(fields).forEach(([key, fieldState]) => {
-        values[key] = fieldState.value;
-      });
-      return values;
-    }
-  }, [schema, fields]);
+    const setValue = async (field: string, value: any) => {
+      const error = await validateField(field, value);
+      state = {
+        ...state,
+        [field]: { value, error }
+      };
+      notify();
+    };
 
-  const setValue = useCallback(async (field: string, value: any) => {
-    const error = await validateField(field, value);
-    
-    setFields((prev) => ({
-      ...prev,
-      [field]: { value, error }
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [field]: error
-    }));
-  }, [validateField]);
-
-  const contextValue = useMemo((): FormTableContextType => ({
-    fields,
-    setValue,
-    errors
-  }), [fields, setValue, errors]);
+    storeRef.current = { getState, setValue, subscribe };
+  }
 
   return (
-    <FormTableContext.Provider value={contextValue}>
+    <FormTableContext.Provider value={storeRef.current}>
       {children}
     </FormTableContext.Provider>
   );
 };
 
-export const useFormTable = (): FormTableContextType => {
-  const context = useContext(FormTableContext);
-  if (!context) {
-    throw new Error('useFormTable must be used within a FormTableProvider');
+const useStore = (): FormTableStore => {
+  const store = useContext(FormTableContext);
+  if (!store) {
+    throw new Error('useStore must be used within a FormTableProvider');
   }
-  return context;
+  return store;
+};
+
+export const useFormTable = () => {
+  const store = useStore();
+  const fields = useSyncExternalStore(store.subscribe, store.getState);
+  return { fields, setValue: store.setValue };
+};
+
+export const useSelectorContext = <T,>(selector: (state: FieldsState) => T): T => {
+  const store = useStore();
+  return useSyncExternalStore(
+    store.subscribe,
+    () => selector(store.getState())
+  );
 };
 
 export const useField = (field: string) => {
-  const { fields, setValue, errors } = useFormTable();
+  const store = useStore();
+  
+  const fieldState = useSelectorContext(
+    useCallback((state: FieldsState): FieldState => state[field] ?? { value: '', error: undefined }, [field])
+  );
 
-  return useMemo(() => ({
-    value: fields[field]?.value ?? '',
-    error: errors[field],
-    setValue: (value: any) => setValue(field, value)
-  }), [fields, field, setValue, errors]);
+  const setValue = useCallback((value: any) => {
+    store.setValue(field, value);
+  }, [store, field]);
+
+  return {
+    value: fieldState.value,
+    error: fieldState.error,
+    setValue
+  };
 };
