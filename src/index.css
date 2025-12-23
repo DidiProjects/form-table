@@ -364,6 +364,45 @@ select.cell-input:focus {
   background-color: #fff;
 }
 
+/* Editable Cell */
+.editable-cell {
+  position: relative;
+  padding: 0;
+  vertical-align: top;
+}
+
+.editable-cell .cell-input {
+  width: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.editable-cell .cell-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.editable-cell.has-error .cell-input {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+}
+
+.editable-cell.has-error .cell-input:focus {
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+.editable-cell .cell-error {
+  display: block;
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
 /* Focus Management */
 .form-table-cell:focus-within {
   z-index: 1;

@@ -10,8 +10,16 @@ type TMockData = {
   age: number;
   position: string;
   salary: number;
-  notes: string;
+  notes: string | undefined;
 }
+
+const positionOptions = [
+  { value: 'dev', label: 'Developer' },
+  { value: 'designer', label: 'Designer' },
+  { value: 'manager', label: 'Manager' },
+  { value: 'analyst', label: 'Analyst' },
+  { value: 'qa', label: 'QA Engineer' },
+];
 
 const ColumnConfigs: Column[] = [
   {
@@ -37,6 +45,7 @@ const ColumnConfigs: Column[] = [
     type: 'select',
     label: 'Position',
     placeholder: 'Select position',
+    options: positionOptions,
   },
   {
     field: 'salary',
@@ -76,27 +85,17 @@ function App() {
       <header className="App-header">
         <h1>FormTable - Table Form Manager</h1>
         <p>
-          This is a usage example of the FormTable component with editable cells,
-          Tab navigation, Yup validation, and React context.
+          Edit the fields below to see real-time Yup validation in action.
         </p>
       </header>
 
       <div className="app-content">
         <div className="demo-section">
-          <h2>Example: Employee Registration</h2>
-          <div className="demo-description">
-            <p><strong>Available features:</strong></p>
-            <ul>
-              <li>Editable cells with different types (text, email, number, select)</li>
-              <li>Tab/Shift+Tab navigation between cells</li>
-              <li>Row submission with Enter</li>
-              <li>Yup validation (onBlur and onChange optional)</li>
-              <li>Visual focus and cell states</li>
-              <li>Individual row reset</li>
-              <li>Shared context between cells</li>
-            </ul>
-          </div>
-          <FormTable
+          <h2>Employee Registration</h2>
+          <p className="demo-hint">
+            Try clearing the name field or entering an invalid email to see validation errors.
+          </p>
+          <FormTable<TMockData>
             columns={ColumnConfigs}
             initialData={initialData}
             schema={userSchema}
