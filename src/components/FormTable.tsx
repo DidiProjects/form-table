@@ -8,15 +8,17 @@ interface FormTableProps<T extends Record<string, any>> {
   columns: Column[];
   initialData: T;
   schema: yup.ObjectSchema<T>;
+  debounceMs?: number;
 }
 
 export const FormTable = <T extends Record<string, any>>({ 
   columns, 
   initialData, 
-  schema 
+  schema,
+  debounceMs
 }: FormTableProps<T>) => {
   return (
-    <FormTableProvider initialData={initialData} schema={schema}>
+    <FormTableProvider initialData={initialData} schema={schema} debounceMs={debounceMs}>
       <table className="form-table">
         <thead>
           <tr>

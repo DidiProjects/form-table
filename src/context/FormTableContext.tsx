@@ -14,6 +14,7 @@ interface FormTableProviderProps<T extends Record<string, any>> {
   children: React.ReactNode;
   initialData: T;
   schema: yup.ObjectSchema<T>;
+  debounceMs?: number;
 }
 
 const FormTableContext = createContext<FormTableStore | null>(null);
@@ -21,7 +22,8 @@ const FormTableContext = createContext<FormTableStore | null>(null);
 export const FormTableProvider = <T extends Record<string, any>>({
   children,
   initialData,
-  schema
+  schema,
+  debounceMs = 500
 }: FormTableProviderProps<T>) => {
   const storeRef = useRef<FormTableStore | null>(null);
 
@@ -32,6 +34,7 @@ export const FormTableProvider = <T extends Record<string, any>>({
     });
 
     const listeners = new Set<Listener>();
+    const debounceTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
     const getState = () => state;
 
@@ -67,15 +70,25 @@ export const FormTableProvider = <T extends Record<string, any>>({
       };
       notify();
 
-      validateField(field, value).then(error => {
-        if (state[field]?.value === value) {
-          state = {
-            ...state,
-            [field]: { ...state[field], error }
-          };
-          notify();
-        }
-      });
+      const existingTimer = debounceTimers.get(field);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+      }
+
+      const timer = setTimeout(() => {
+        debounceTimers.delete(field);
+        validateField(field, value).then(error => {
+          if (state[field]?.value === value) {
+            state = {
+              ...state,
+              [field]: { ...state[field], error }
+            };
+            notify();
+          }
+        });
+      }, debounceMs);
+
+      debounceTimers.set(field, timer);
     };
 
     storeRef.current = { getState, setValue, subscribe };
