@@ -1,36 +1,36 @@
 import React from 'react';
 import { FormTableProvider } from '../context/FormTableContext';
 import { EditableCell } from './EditableCell';
-import { Column, FormConfig } from '../types';
+import { Column, FormSchemas, FormSubmitHandlers } from '../types';
 
 interface FormTableProps {
-  formId: string;
   columns: Column[];
-  forms: FormConfig[];
+  initialData: Record<string, Record<string, any>>;
+  schemas: FormSchemas;
+  onSubmit?: FormSubmitHandlers;
   debounceMs?: number;
-  navigationFields?: string[];
 }
 
 export const FormTable: React.FC<FormTableProps> = ({ 
-  formId,
   columns, 
-  forms,
-  debounceMs,
-  navigationFields
+  initialData,
+  schemas,
+  onSubmit,
+  debounceMs
 }) => {
-  const fields = navigationFields ?? columns.map(col => `${formId}.${col.field}`);
-
   return (
     <FormTableProvider 
-      forms={forms}
+      columns={columns}
+      initialData={initialData}
+      schemas={schemas}
+      onSubmit={onSubmit}
       debounceMs={debounceMs}
-      navigationFields={fields}
     >
       <table className="form-table">
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.field}>{col.label}</th>
+              <th key={`${col.formId}.${col.field}`}>{col.label}</th>
             ))}
           </tr>
         </thead>
@@ -38,8 +38,8 @@ export const FormTable: React.FC<FormTableProps> = ({
           <tr>
             {columns.map((col) => (
               <EditableCell
-                key={col.field}
-                formId={formId}
+                key={`${col.formId}.${col.field}`}
+                formId={col.formId}
                 field={col.field}
                 type={col.type}
                 placeholder={col.placeholder}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, FormConfig, FormTableProvider, EditableCell } from '@dspackages/form-table';
+import { Column, FormSchemas, FormSubmitHandlers, FormTableProvider, EditableCell } from '@dspackages/form-table';
 import '@dspackages/form-table/dist/index.css';
 import * as yup from 'yup';
 import './App.css';
@@ -24,66 +24,53 @@ const positionOptions = [
   { value: 'qa', label: 'QA Engineer' },
 ];
 
-const personalColumns: Column[] = [
-  { field: 'name', type: 'text', label: 'Full Name', placeholder: 'Enter full name' },
-  { field: 'email', type: 'email', label: 'Email', placeholder: 'Enter email' },
-  { field: 'age', type: 'number', label: 'Age', placeholder: 'Enter age' },
+const columns: Column[] = [
+  { formId  : 'personal', field: 'name', type: 'text', label: 'Full Name', placeholder: 'Enter full name' },
+  { formId: 'personal', field: 'email', type: 'email', label: 'Email', placeholder: 'Enter email' },
+  { formId: 'personal', field: 'age', type: 'number', label: 'Age', placeholder: 'Enter age' },
+  { formId: 'job', field: 'position', type: 'select', label: 'Position', placeholder: 'Select position', options: positionOptions },
+  { formId: 'job', field: 'salary', type: 'number', label: 'Salary ($)', placeholder: 'Enter salary' },
+  { formId: 'job', field: 'notes', type: 'text', label: 'Notes', placeholder: 'Enter notes' },
 ];
 
-const jobColumns: Column[] = [
-  { field: 'position', type: 'select', label: 'Position', placeholder: 'Select position', options: positionOptions },
-  { field: 'salary', type: 'number', label: 'Salary ($)', placeholder: 'Enter salary' },
-  { field: 'notes', type: 'text', label: 'Notes', placeholder: 'Enter notes' },
-];
-
-const personalSchema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  age: yup.number().min(18, 'Must be at least 18').required('Age is required'),
-});
-
-const jobSchema = yup.object().shape({
-  position: yup.string().required('Position is required'),
-  salary: yup.number().min(0, 'Salary must be positive').required('Salary is required'),
-  notes: yup.string(),
-});
-
-const handlePersonalSubmit = (values: TPersonalData) => {
-  console.log('Personal form submitted:', values);
-  alert('Personal form submitted!\n\n' + JSON.stringify(values, null, 2));
+const initialData = {
+  personal: {
+    name: 'John Silva',
+    email: 'john@example.com',
+    age: 30,
+  },
+  job: {
+    position: 'dev',
+    salary: 5000,
+    notes: 'Experienced developer',
+  },
 };
 
-const handleJobSubmit = (values: TJobData) => {
-  console.log('Job form submitted:', values);
-  alert('Job form submitted!\n\n' + JSON.stringify(values, null, 2));
+const schemas: FormSchemas = {
+  personal: yup.object().shape({
+    name: yup.string().required('Name is required'),
+    email: yup.string().email('Invalid email').required('Email is required'),
+    age: yup.number().min(18, 'Must be at least 18').required('Age is required'),
+  }),
+  job: yup.object().shape({
+    position: yup.string().required('Position is required'),
+    salary: yup.number().min(0, 'Salary must be positive').required('Salary is required'),
+    notes: yup.string(),
+  }),
 };
 
-const forms: FormConfig[] = [
-  { 
-    id: 'personal', 
-    initialData: { name: 'John Silva', email: 'john@example.com', age: 30 }, 
-    schema: personalSchema,
-    onSubmit: handlePersonalSubmit
+const onSubmit: FormSubmitHandlers = {
+  personal: (values: TPersonalData) => {
+    console.log('Personal form submitted:', values);
+    alert('Personal form submitted!\n\n' + JSON.stringify(values, null, 2));
   },
-  { 
-    id: 'job', 
-    initialData: { position: 'dev', salary: 5000, notes: 'Experienced developer' }, 
-    schema: jobSchema,
-    onSubmit: handleJobSubmit
+  job: (values: TJobData) => {
+    console.log('Job form submitted:', values);
+    alert('Job form submitted!\n\n' + JSON.stringify(values, null, 2));
   },
-];
-
-const navigationFields = [
-  'personal.name',
-  'personal.email', 
-  'personal.age',
-  'job.position',
-  'job.salary',
-  'job.notes',
-];
+};
 
 function App() {
-
   return (
     <div className="App">
       <header className="App-header">
@@ -95,8 +82,10 @@ function App() {
 
       <div className="app-content">
         <FormTableProvider
-          forms={forms}
-          navigationFields={navigationFields}
+          columns={columns}
+          initialData={initialData}
+          schemas={schemas}
+          onSubmit={onSubmit}
           debounceMs={300}
         >
           <div className="demo-section">
@@ -104,26 +93,15 @@ function App() {
             <table className="form-table">
               <thead>
                 <tr>
-                  {personalColumns.map(col => <th key={col.field}>{col.label}</th>)}
-                  {jobColumns.map(col => <th key={col.field}>{col.label}</th>)}
+                  {columns.map(col => <th key={`${col.formId}.${col.field}`}>{col.label}</th>)}
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  {personalColumns.map(col => (
+                  {columns.map(col => (
                     <EditableCell
-                      key={col.field}
-                      formId="personal"
-                      field={col.field}
-                      type={col.type}
-                      placeholder={col.placeholder}
-                      options={col.options}
-                    />
-                  ))}
-                  {jobColumns.map(col => (
-                    <EditableCell
-                      key={col.field}
-                      formId="job"
+                      key={`${col.formId}.${col.field}`}
+                      formId={col.formId}
                       field={col.field}
                       type={col.type}
                       placeholder={col.placeholder}

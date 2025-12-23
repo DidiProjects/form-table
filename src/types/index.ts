@@ -10,6 +10,7 @@ export type FieldsState = Record<string, FieldState>;
 export type FormsState = Record<string, FieldsState>;
 
 export interface Column {
+  formId: string;
   field: string;
   label: string;
   type?: 'text' | 'number' | 'email' | 'select';
@@ -17,15 +18,6 @@ export interface Column {
   options?: { value: string | number; label: string }[];
 }
 
-export interface FormConfig<T extends Record<string, any> = Record<string, any>> {
-  id: string;
-  initialData: T;
-  schema: yup.ObjectSchema<T>;
-  onSubmit?: (values: any) => void;
-}
+export type FormSchemas = Record<string, yup.ObjectSchema<any>>;
 
-export interface FormTableProps<T extends Record<string, any>> {
-  columns: Column[];
-  initialData: T;
-  schema: yup.ObjectSchema<T>;
-}
+export type FormSubmitHandlers = Record<string, (values: any) => void>;

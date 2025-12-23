@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useCallback, useRef, useSyncExternalStore } from 'react';
 import * as yup from 'yup';
-import { FieldsState, FieldState, FormsState, FormConfig } from '../types';
+import { FieldsState, FieldState, FormsState, Column, FormSchemas, FormSubmitHandlers } from '../types';
 
 type Listener = () => void;
 
@@ -24,34 +24,36 @@ interface FormTableStore {
 
 interface FormTableProviderProps {
   children: React.ReactNode;
-  forms: FormConfig[];
+  columns: Column[];
+  initialData: Record<string, Record<string, any>>;
+  schemas: FormSchemas;
+  onSubmit?: FormSubmitHandlers;
   debounceMs?: number;
-  navigationFields?: string[];
 }
 
 const FormTableContext = createContext<FormTableStore | null>(null);
 
 export const FormTableProvider: React.FC<FormTableProviderProps> = ({
   children,
-  forms,
-  debounceMs = 500,
-  navigationFields = []
+  columns,
+  initialData,
+  schemas,
+  onSubmit = {},
+  debounceMs = 500
 }) => {
   const storeRef = useRef<FormTableStore | null>(null);
 
   if (!storeRef.current) {
     let state: FormsState = {};
-    const schemas = new Map<string, yup.ObjectSchema<any>>();
-    const submitHandlers = new Map<string, ((values: any) => void) | undefined>();
 
-    forms.forEach(form => {
-      state[form.id] = {};
-      schemas.set(form.id, form.schema);
-      submitHandlers.set(form.id, form.onSubmit);
-      Object.entries(form.initialData).forEach(([key, value]) => {
-        state[form.id][key] = { value, error: undefined };
+    Object.entries(initialData).forEach(([formId, formData]) => {
+      state[formId] = {};
+      Object.entries(formData).forEach(([field, value]) => {
+        state[formId][field] = { value, error: undefined };
       });
     });
+
+    const navigationFields = columns.map(col => `${col.formId}.${col.field}`);
 
     let navigation: NavigationState = {
       activeField: null,
@@ -89,7 +91,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
     };
 
     const validateField = async (formId: string, field: string, value: any): Promise<string | undefined> => {
-      const schema = schemas.get(formId);
+      const schema = schemas[formId];
       if (!schema) return 'Form not found';
 
       try {
@@ -223,14 +225,14 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
         }
       }
 
-      const onSubmit = submitHandlers.get(formId);
-      if (!onSubmit) return;
+      const submitHandler = onSubmit[formId];
+      if (!submitHandler) return;
 
       const values: Record<string, any> = {};
       Object.entries(state[formId] || {}).forEach(([fieldName, fieldState]) => {
         values[fieldName] = fieldState.value;
       });
-      onSubmit(values);
+      submitHandler(values);
     };
 
     storeRef.current = {
