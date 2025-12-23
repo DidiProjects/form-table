@@ -361,3 +361,209 @@
     padding: 20px;
   }
 }
+
+/* BookOrders Example */
+.bookorders-container {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.bookorders-container h2 {
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.bookorders-instructions {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin: 0 0 20px 0;
+}
+
+.bookorders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #16213e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bookorders-table thead tr:first-child th {
+  background: #0f3460;
+  color: #fff;
+  padding: 12px 16px;
+  font-weight: 600;
+  border-bottom: 2px solid #1a1a2e;
+}
+
+.bookorders-table thead tr:last-child th {
+  background: #1a1a2e;
+  color: #9ca3af;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.ticker-header {
+  background: #0f3460 !important;
+  border-right: 2px solid #1a1a2e;
+  min-width: 80px;
+}
+
+.group-header {
+  text-align: center;
+}
+
+.group-header.buy-header {
+  background: linear-gradient(135deg, #155e3e 0%, #10b981 100%) !important;
+  color: #fff !important;
+}
+
+.group-header.sell-header {
+  background: linear-gradient(135deg, #7f1d1d 0%, #ef4444 100%) !important;
+  color: #fff !important;
+}
+
+.bookorders-table tbody tr {
+  border-bottom: 1px solid #0f3460;
+}
+
+.bookorders-table tbody tr:hover {
+  background: #1e3a5f;
+}
+
+.ticker-cell {
+  background: #0f3460;
+  color: #60a5fa;
+  font-weight: 700;
+  font-family: 'Consolas', 'Monaco', monospace;
+  text-align: center;
+  padding: 12px 16px;
+  border-right: 2px solid #1a1a2e;
+  font-size: 0.95rem;
+}
+
+.bookorders-table td {
+  padding: 4px 8px;
+}
+
+.bookorders-table .editable-cell {
+  background: transparent;
+}
+
+.bookorders-table .editable-cell input {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: right;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.bookorders-table .editable-cell input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.bookorders-table .editable-cell input::placeholder {
+  color: #4b5563;
+}
+
+.bookorders-table .editable-cell .error-message {
+  color: #f87171;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+/* ProductForm Example */
+.productform-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.productform-container h2 {
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.productform-instructions {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 0 0 20px 0;
+}
+
+.productform-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.productform-table thead th {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 12px 16px;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+  text-align: left;
+}
+
+.productform-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.productform-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.productform-table td {
+  padding: 8px 12px;
+}
+
+.productform-table .editable-cell {
+  background: transparent;
+}
+
+.productform-table .editable-cell input,
+.productform-table .editable-cell select {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  color: #1f2937;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.productform-table .editable-cell input:focus,
+.productform-table .editable-cell select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.productform-table .editable-cell input::placeholder {
+  color: #9ca3af;
+}
+
+.productform-table .editable-cell .error-message {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
