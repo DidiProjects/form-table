@@ -80,12 +80,17 @@ const userSchema = yup.object().shape({
 });
 
 function App() {
+  const handleSubmit = (values: TMockData) => {
+    console.log('Form submitted:', values);
+    alert('Form submitted!\n\n' + JSON.stringify(values, null, 2));
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>FormTable - Table Form Manager</h1>
         <p>
-          Edit the fields below to see real-time Yup validation in action.
+          Use Tab to navigate between fields. Press Enter on the last field to submit.
         </p>
       </header>
 
@@ -93,12 +98,13 @@ function App() {
         <div className="demo-section">
           <h2>Employee Registration</h2>
           <p className="demo-hint">
-            Try clearing the name field or entering an invalid email to see validation errors.
+            Navigation: Tab (next) | Shift+Tab (previous) | Enter (next or submit on last field)
           </p>
           <FormTable<TMockData>
             columns={ColumnConfigs}
             initialData={initialData}
             schema={userSchema}
+            onSubmit={handleSubmit}
           />
         </div>
       </div>

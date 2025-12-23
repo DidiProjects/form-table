@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useField } from '../context/FormTableContext';
 
 interface EditableCellProps {
@@ -14,7 +14,14 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   placeholder,
   options
 }) => {
-  const { value, error, setValue } = useField(field);
+  const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
+  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, isLastField } = useField(field);
+
+  useEffect(() => {
+    if (isActive && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isActive]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const newValue = type === 'number' 
@@ -23,12 +30,37 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     setValue(newValue);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      if (e.shiftKey) {
+        previousField();
+      } else {
+        nextField();
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isLastField) {
+        submit();
+      } else {
+        nextField();
+      }
+    }
+  };
+
+  const handleFocus = () => {
+    setActive();
+  };
+
   if (type === 'select' && options) {
     return (
-      <td className={`editable-cell ${error ? 'has-error' : ''}`}>
+      <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''}`}>
         <select
+          ref={inputRef as React.RefObject<HTMLSelectElement>}
           value={value ?? ''}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
           className="cell-input"
         >
           <option value="">{placeholder || 'Select...'}</option>
@@ -42,11 +74,14 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }
 
   return (
-    <td className={`editable-cell ${error ? 'has-error' : ''}`}>
+    <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''}`}>
       <input
+        ref={inputRef as React.RefObject<HTMLInputElement>}
         type={type}
         value={value ?? ''}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
         placeholder={placeholder}
         className="cell-input"
       />

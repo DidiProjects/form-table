@@ -9,16 +9,28 @@ interface FormTableProps<T extends Record<string, any>> {
   initialData: T;
   schema: yup.ObjectSchema<T>;
   debounceMs?: number;
+  navigationFields?: string[];
+  onSubmit?: (values: T) => void;
 }
 
 export const FormTable = <T extends Record<string, any>>({ 
   columns, 
   initialData, 
   schema,
-  debounceMs
+  debounceMs,
+  navigationFields,
+  onSubmit
 }: FormTableProps<T>) => {
+  const fields = navigationFields ?? columns.map(col => col.field);
+
   return (
-    <FormTableProvider initialData={initialData} schema={schema} debounceMs={debounceMs}>
+    <FormTableProvider 
+      initialData={initialData} 
+      schema={schema} 
+      debounceMs={debounceMs}
+      navigationFields={fields}
+      onSubmit={onSubmit}
+    >
       <table className="form-table">
         <thead>
           <tr>
