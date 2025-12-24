@@ -17,7 +17,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   options
 }) => {
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
-  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, resetForm, willComplete, markVisited, instanceId } = useField(formId, field);
+  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, resetForm, getWillComplete, markVisited, instanceId } = useField(formId, field);
 
   useEffect(() => {
     if (isActive && inputRef.current) {
@@ -43,11 +43,10 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       }
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (willComplete) {
-        markVisited();
+      markVisited();
+      if (getWillComplete()) {
         submit();
       } else {
-        markVisited();
         nextField();
       }
     } else if (e.key === 'Escape') {

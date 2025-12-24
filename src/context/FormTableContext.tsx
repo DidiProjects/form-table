@@ -399,6 +399,10 @@ export const useField = (formId: string, field: string) => {
   const isLastField = fieldPath === formFields[formFields.length - 1];
   const willComplete = store.willCompleteAllFields(formId, field);
 
+  const getWillComplete = useCallback(() => {
+    return store.willCompleteAllFields(formId, field);
+  }, [store, formId, field]);
+
   const setValue = useCallback((value: any) => {
     store.setValue(formId, field, value);
   }, [store, formId, field]);
@@ -423,6 +427,7 @@ export const useField = (formId: string, field: string) => {
     resetForm,
     isLastField,
     willComplete,
+    getWillComplete,
     markVisited,
     instanceId: store.instanceId
   };
