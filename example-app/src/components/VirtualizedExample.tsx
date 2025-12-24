@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
@@ -10,6 +10,17 @@ interface RowData {
   ticker: string;
   buyData: { quantity: number; price: number };
   sellData: { quantity: number; price: number };
+}
+
+interface SubmissionLog {
+  id: string;
+  timestamp: Date;
+  type: 'buy' | 'sell';
+  ticker: string;
+  rowId: number;
+  quantity: number;
+  price: number;
+  volume: number;
 }
 
 const tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META', 'NVDA', 'TSLA', 'AMD', 'INTC', 'NFLX', 'CRM', 'ORCL', 'IBM', 'ADBE', 'PYPL'];
@@ -71,12 +82,35 @@ const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
 interface VirtualRowProps {
   data: RowData;
   style: React.CSSProperties;
+  onSubmission: (log: SubmissionLog) => void;
 }
 
-const VirtualRow: React.FC<VirtualRowProps> = ({ data, style }) => {
+const VirtualRow: React.FC<VirtualRowProps> = ({ data, style, onSubmission }) => {
   const onSubmit: FormSubmitHandlers = {
-    buy: (values) => console.log(`BUY ${data.ticker} #${data.id}: ${values.quantity} @ $${values.price}`),
-    sell: (values) => console.log(`SELL ${data.ticker} #${data.id}: ${values.quantity} @ $${values.price}`),
+    buy: (values) => {
+      onSubmission({
+        id: `${data.id}-buy-${Date.now()}`,
+        timestamp: new Date(),
+        type: 'buy',
+        ticker: data.ticker,
+        rowId: data.id + 1,
+        quantity: values.quantity,
+        price: values.price,
+        volume: values.quantity * values.price,
+      });
+    },
+    sell: (values) => {
+      onSubmission({
+        id: `${data.id}-sell-${Date.now()}`,
+        timestamp: new Date(),
+        type: 'sell',
+        ticker: data.ticker,
+        rowId: data.id + 1,
+        quantity: values.quantity,
+        price: values.price,
+        volume: values.quantity * values.price,
+      });
+    },
   };
 
   return (
@@ -161,10 +195,15 @@ const VirtualRow = ({ data, style }) => (
 
 export const VirtualizedExample: React.FC = () => {
   const rows = useMemo(() => generateRows(TOTAL_ROWS), []);
+  const [submissions, setSubmissions] = useState<SubmissionLog[]>([]);
+
+  const handleSubmission = useCallback((log: SubmissionLog) => {
+    setSubmissions((prev) => [log, ...prev].slice(0, 10));
+  }, []);
 
   const Row = useCallback(({ index, style, data }: ListChildComponentProps<RowData[]>) => {
-    return <VirtualRow data={data[index]} style={style} />;
-  }, []);
+    return <VirtualRow data={data[index]} style={style} onSubmission={handleSubmission} />;
+  }, [handleSubmission]);
 
   return (
     <div className="example-section">
@@ -178,6 +217,30 @@ export const VirtualizedExample: React.FC = () => {
 
       <div className="example-demo">
         <h3>Live Demo - {TOTAL_ROWS.toLocaleString()} Rows</h3>
+        
+        {submissions.length > 0 && (
+          <div className="submissions-log">
+            <div className="submissions-header">
+              <span>Recent Submissions</span>
+              <button onClick={() => setSubmissions([])}>Clear</button>
+            </div>
+            <div className="submissions-list">
+              {submissions.map((log) => (
+                <div key={log.id} className={`submission-item ${log.type}`}>
+                  <span className="submission-type">{log.type.toUpperCase()}</span>
+                  <span className="submission-ticker">{log.ticker}</span>
+                  <span className="submission-details">
+                    Row #{log.rowId} | {log.quantity} @ ${log.price.toFixed(2)} = ${log.volume.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </span>
+                  <span className="submission-time">
+                    {log.timestamp.toLocaleTimeString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="virtual-table-container">
           <div className="virtual-header">
             <div className="virtual-cell virtual-id">#</div>
@@ -199,7 +262,7 @@ export const VirtualizedExample: React.FC = () => {
             {Row}
           </FixedSizeList>
         </div>
-        <p className="demo-hint">Scroll to see virtualization in action. Only ~10 rows are rendered at a time!</p>
+        <p className="demo-hint">Tab through fields and press Enter to submit. Last 10 submissions shown above.</p>
       </div>
 
       <div className="example-code">

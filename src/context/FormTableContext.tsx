@@ -55,8 +55,9 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
 
   if (!storeRef.current) {
     let state: FormsState = {};
+    let currentInitialData = { ...initialData };
 
-    Object.entries(initialData).forEach(([formId, formData]) => {
+    Object.entries(currentInitialData).forEach(([formId, formData]) => {
       state[formId] = {};
       Object.entries(formData).forEach(([field, value]) => {
         state[formId][field] = { value, error: undefined };
@@ -77,6 +78,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
 
     const getState = () => state;
     const getNavigation = () => navigation;
+    const getInitialData = () => currentInitialData;
 
     const subscribe = (listener: Listener) => {
       listeners.add(listener);
@@ -264,10 +266,18 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
       Object.entries(state[formId] || {}).forEach(([fieldName, fieldState]) => {
         values[fieldName] = fieldState.value;
       });
+      
       submitHandler(values);
+      updateInitialData(formId, values);
+      reset(formId);
     };
 
-    const getInitialData = () => initialData;
+    const updateInitialData = (formId: string, values: Record<string, any>) => {
+      currentInitialData = {
+        ...currentInitialData,
+        [formId]: { ...values }
+      };
+    };
 
     const reset = (targetFormId?: string) => {
       if (targetFormId) {
@@ -278,7 +288,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
           }
         });
 
-        const formInitialData = initialData[targetFormId];
+        const formInitialData = currentInitialData[targetFormId];
         if (formInitialData) {
           state = {
             ...state,
@@ -306,7 +316,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
         debounceTimers.clear();
 
         state = {};
-        Object.entries(initialData).forEach(([formId, formData]) => {
+        Object.entries(currentInitialData).forEach(([formId, formData]) => {
           state[formId] = {};
           Object.entries(formData).forEach(([field, value]) => {
             state[formId][field] = { value, error: undefined };

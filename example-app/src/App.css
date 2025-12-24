@@ -821,3 +821,106 @@ input[type="number"] {
   padding: 8px 10px;
   font-size: 0.85rem;
 }
+
+/* Submissions Log */
+.submissions-log {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.submissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.submissions-header button {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.submissions-header button:hover {
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.submissions-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.submission-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.85rem;
+}
+
+.submission-item:last-child {
+  border-bottom: none;
+}
+
+.submission-item.buy {
+  background: #f0fdf4;
+}
+
+.submission-item.sell {
+  background: #fef2f2;
+}
+
+.submission-type {
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.submission-item.buy .submission-type {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.submission-item.sell .submission-type {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.submission-ticker {
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  min-width: 60px;
+}
+
+.submission-details {
+  flex: 1;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.submission-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
