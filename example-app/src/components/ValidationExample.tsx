@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Column, FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
 
@@ -9,7 +9,7 @@ const columns: Column[] = [
   { formId: 'user', field: 'website', type: 'text', label: 'Website', placeholder: 'https://...' },
 ];
 
-const users = [
+const defaultUsers = [
   { username: 'jo', email: 'invalid-email', age: 15, website: 'not-a-url' },
   { username: 'jane_doe', email: 'jane@example.com', age: 28, website: 'https://jane.dev' },
 ];
@@ -40,17 +40,23 @@ const schemas: SchemaFactory = (yup) => ({
 });
 
 interface UserRowProps {
-  data: typeof users[0];
+  data: typeof defaultUsers[0];
+  onUpdate: (idx: number, values: typeof defaultUsers[0]) => void;
+  idx: number;
 }
 
-const UserRow: React.FC<UserRowProps> = ({ data }) => {
+const UserRow: React.FC<UserRowProps> = memo(({ data, onUpdate, idx }) => {
   return (
     <FormTableProvider
+      key={JSON.stringify(data)}
       columns={columns}
       initialData={{ user: data }}
       schemas={schemas}
       onSubmit={{
-        user: (values) => alert(`Valid! ${JSON.stringify(values, null, 2)}`),
+        user: (values) => {
+          alert(`Valid! ${JSON.stringify(values, null, 2)}`);
+          onUpdate(idx, values);
+        },
       }}
       debounceMs={500}
     >
@@ -67,7 +73,7 @@ const UserRow: React.FC<UserRowProps> = ({ data }) => {
       </tr>
     </FormTableProvider>
   );
-};
+});
 
 const codeExample = `// Rich validation with yup - all built-in!
 const schemas: SchemaFactory = (yup) => ({
@@ -113,6 +119,16 @@ const schemas: SchemaFactory = (yup) => ({
 </FormTableProvider>`;
 
 export const ValidationExample: React.FC = () => {
+  const [users, setUsers] = useState(defaultUsers);
+
+  const handleUpdate = useCallback((idx: number, values: typeof defaultUsers[0]) => {
+    setUsers((prev) => {
+      const updated = [...prev];
+      updated[idx] = values;
+      return updated;
+    });
+  }, []);
+
   return (
     <div className="example-section">
       <div className="example-header">
@@ -136,7 +152,7 @@ export const ValidationExample: React.FC = () => {
           </thead>
           <tbody>
             {users.map((user, idx) => (
-              <UserRow key={idx} data={user} />
+              <UserRow key={idx} data={user} onUpdate={handleUpdate} idx={idx} />
             ))}
           </tbody>
         </table>

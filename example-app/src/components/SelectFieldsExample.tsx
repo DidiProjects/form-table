@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Column, FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
 
@@ -22,7 +22,7 @@ const columns: Column[] = [
   { formId: 'product', field: 'price', type: 'number', label: 'Price', placeholder: '0.00' },
 ];
 
-const products = [
+const defaultProducts = [
   { name: 'Wireless Headphones', category: 'electronics', status: 'active', price: 149.99 },
   { name: 'Organic Green Tea', category: 'food', status: 'active', price: 12.50 },
   { name: 'Programming Book', category: 'books', status: 'pending', price: 45.00 },
@@ -38,12 +38,15 @@ const schemas: SchemaFactory = (yup) => ({
 });
 
 interface ProductRowProps {
-  data: typeof products[0];
+  data: typeof defaultProducts[0];
+  onUpdate: (idx: number, values: typeof defaultProducts[0]) => void;
+  idx: number;
 }
 
-const ProductRow: React.FC<ProductRowProps> = ({ data }) => {
+const ProductRow: React.FC<ProductRowProps> = memo(({ data, onUpdate, idx }) => {
   return (
     <FormTableProvider
+      key={JSON.stringify(data)}
       columns={columns}
       initialData={{ product: data }}
       schemas={schemas}
@@ -51,6 +54,7 @@ const ProductRow: React.FC<ProductRowProps> = ({ data }) => {
         product: (values) => {
           console.log('Product updated:', values);
           alert(`Product Updated!\n\n${JSON.stringify(values, null, 2)}`);
+          onUpdate(idx, values);
         },
       }}
       debounceMs={300}
@@ -69,7 +73,7 @@ const ProductRow: React.FC<ProductRowProps> = ({ data }) => {
       </tr>
     </FormTableProvider>
   );
-};
+});
 
 const codeExample = `// Define select options
 const categoryOptions = [
@@ -110,6 +114,16 @@ const columns: Column[] = [
 />`;
 
 export const SelectFieldsExample: React.FC = () => {
+  const [products, setProducts] = useState(defaultProducts);
+
+  const handleUpdate = useCallback((idx: number, values: typeof defaultProducts[0]) => {
+    setProducts((prev) => {
+      const updated = [...prev];
+      updated[idx] = values;
+      return updated;
+    });
+  }, []);
+
   return (
     <div className="example-section">
       <div className="example-header">
@@ -132,7 +146,7 @@ export const SelectFieldsExample: React.FC = () => {
           </thead>
           <tbody>
             {products.map((product, idx) => (
-              <ProductRow key={idx} data={product} />
+              <ProductRow key={idx} data={product} onUpdate={handleUpdate} idx={idx} />
             ))}
           </tbody>
         </table>

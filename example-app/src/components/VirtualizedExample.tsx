@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useCallback, useState, memo } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
@@ -83,9 +83,10 @@ interface VirtualRowProps {
   data: RowData;
   style: React.CSSProperties;
   onSubmission: (log: SubmissionLog) => void;
+  onUpdate: (id: number, formId: 'buy' | 'sell', values: { quantity: number; price: number }) => void;
 }
 
-const VirtualRow: React.FC<VirtualRowProps> = ({ data, style, onSubmission }) => {
+const VirtualRow: React.FC<VirtualRowProps> = memo(({ data, style, onSubmission, onUpdate }) => {
   const onSubmit: FormSubmitHandlers = {
     buy: (values) => {
       onSubmission({
@@ -98,6 +99,7 @@ const VirtualRow: React.FC<VirtualRowProps> = ({ data, style, onSubmission }) =>
         price: values.price,
         volume: values.quantity * values.price,
       });
+      onUpdate(data.id, 'buy', values);
     },
     sell: (values) => {
       onSubmission({
@@ -110,6 +112,7 @@ const VirtualRow: React.FC<VirtualRowProps> = ({ data, style, onSubmission }) =>
         price: values.price,
         volume: values.quantity * values.price,
       });
+      onUpdate(data.id, 'sell', values);
     },
   };
 
@@ -143,7 +146,7 @@ const VirtualRow: React.FC<VirtualRowProps> = ({ data, style, onSubmission }) =>
       </FormTableProvider>
     </div>
   );
-};
+});
 
 const codeExample = `import { FixedSizeList as List } from 'react-window';
 import { FormTableProvider, EditableCell, useSelectorContext } from '@dspackages/form-table';
@@ -194,16 +197,26 @@ const VirtualRow = ({ data, style }) => (
 </List>`;
 
 export const VirtualizedExample: React.FC = () => {
-  const rows = useMemo(() => generateRows(TOTAL_ROWS), []);
+  const [rows, setRows] = useState<RowData[]>(() => generateRows(TOTAL_ROWS));
   const [submissions, setSubmissions] = useState<SubmissionLog[]>([]);
 
   const handleSubmission = useCallback((log: SubmissionLog) => {
     setSubmissions((prev) => [log, ...prev].slice(0, 10));
   }, []);
 
+  const handleUpdate = useCallback((id: number, formId: 'buy' | 'sell', values: { quantity: number; price: number }) => {
+    setRows((prev) => prev.map((row) => {
+      if (row.id !== id) return row;
+      return {
+        ...row,
+        [formId === 'buy' ? 'buyData' : 'sellData']: values,
+      };
+    }));
+  }, []);
+
   const Row = useCallback(({ index, style, data }: ListChildComponentProps<RowData[]>) => {
-    return <VirtualRow data={data[index]} style={style} onSubmission={handleSubmission} />;
-  }, [handleSubmission]);
+    return <VirtualRow data={data[index]} style={style} onSubmission={handleSubmission} onUpdate={handleUpdate} />;
+  }, [handleSubmission, handleUpdate]);
 
   return (
     <div className="example-section">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
 
@@ -45,12 +45,19 @@ interface StockRowProps {
   ticker: string;
   buyData: { quantity: number; price: number };
   sellData: { quantity: number; price: number };
+  onUpdate: (ticker: string, formId: 'buy' | 'sell', values: { quantity: number; price: number }) => void;
 }
 
-const StockRow: React.FC<StockRowProps> = ({ ticker, buyData, sellData }) => {
+const StockRow: React.FC<StockRowProps> = memo(({ ticker, buyData, sellData, onUpdate }) => {
   const onSubmit: FormSubmitHandlers = {
-    buy: (values) => alert(`BUY ${ticker}: ${values.quantity} @ $${values.price}`),
-    sell: (values) => alert(`SELL ${ticker}: ${values.quantity} @ $${values.price}`),
+    buy: (values) => {
+      alert(`BUY ${ticker}: ${values.quantity} @ $${values.price}`);
+      onUpdate(ticker, 'buy', values);
+    },
+    sell: (values) => {
+      alert(`SELL ${ticker}: ${values.quantity} @ $${values.price}`);
+      onUpdate(ticker, 'sell', values);
+    },
   };
 
   return (
@@ -74,7 +81,7 @@ const StockRow: React.FC<StockRowProps> = ({ ticker, buyData, sellData }) => {
       </tr>
     </FormTableProvider>
   );
-};
+});
 
 const codeExample = `// Multiple independent forms per row
 const buyColumns: Column[] = [
@@ -120,13 +127,25 @@ const onSubmit: FormSubmitHandlers = {
   </tr>
 </FormTableProvider>`;
 
-const stocks = [
+const defaultStocks = [
   { ticker: 'AAPL', buyData: { quantity: 100, price: 178.50 }, sellData: { quantity: 50, price: 179.00 } },
   { ticker: 'GOOGL', buyData: { quantity: 25, price: 141.20 }, sellData: { quantity: 10, price: 142.00 } },
   { ticker: 'MSFT', buyData: { quantity: 75, price: 378.90 }, sellData: { quantity: 30, price: 380.00 } },
 ];
 
 export const MultipleFormsExample: React.FC = () => {
+  const [stocks, setStocks] = useState(defaultStocks);
+
+  const handleUpdate = useCallback((ticker: string, formId: 'buy' | 'sell', values: { quantity: number; price: number }) => {
+    setStocks(prev => prev.map(stock => {
+      if (stock.ticker !== ticker) return stock;
+      return {
+        ...stock,
+        [formId === 'buy' ? 'buyData' : 'sellData']: values,
+      };
+    }));
+  }, []);
+
   return (
     <div className="example-section">
       <div className="example-header">
@@ -157,7 +176,7 @@ export const MultipleFormsExample: React.FC = () => {
           </thead>
           <tbody>
             {stocks.map((stock) => (
-              <StockRow key={stock.ticker} {...stock} />
+              <StockRow key={stock.ticker} {...stock} onUpdate={handleUpdate} />
             ))}
           </tbody>
         </table>

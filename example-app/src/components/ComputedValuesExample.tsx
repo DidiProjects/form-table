@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
 
@@ -7,7 +7,7 @@ const columns: Column[] = [
   { formId: 'calc', field: 'price', type: 'number', label: 'Unit Price', placeholder: '0.00' },
 ];
 
-const initialData = {
+const defaultData = {
   calc: { quantity: 10, price: 25.50 },
 };
 
@@ -62,6 +62,8 @@ const TotalCell: React.FC = () => {
 </FormTableProvider>`;
 
 export const ComputedValuesExample: React.FC = () => {
+  const [formData, setFormData] = useState(defaultData);
+
   return (
     <div className="example-section">
       <div className="example-header">
@@ -75,13 +77,15 @@ export const ComputedValuesExample: React.FC = () => {
       <div className="example-demo">
         <h3>Live Demo</h3>
         <FormTableProvider
+          key={JSON.stringify(formData)}
           columns={columns}
-          initialData={initialData}
+          initialData={formData}
           schemas={schemas}
           onSubmit={{
             calc: (values) => {
               const total = values.quantity * values.price;
               alert(`Order Placed!\n\nQuantity: ${values.quantity}\nPrice: $${values.price}\nTotal: $${total.toFixed(2)}`);
+              setFormData({ calc: values });
             },
           }}
           debounceMs={300}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Column, FormSubmitHandlers, FormTableProvider, EditableCell, useSelectorContext, SchemaFactory } from '@dspackages/form-table';
 
 type TOrderData = {
@@ -12,7 +12,7 @@ interface Stock {
   sellData: TOrderData;
 }
 
-const initialStocks: Stock[] = [
+const defaultStocks: Stock[] = [
   { ticker: 'PETR4', buyData: { quantity: 100, price: 38.50 }, sellData: { quantity: 50, price: 39.00 } },
   { ticker: 'VALE3', buyData: { quantity: 200, price: 62.30 }, sellData: { quantity: 100, price: 63.50 } },
   { ticker: 'ITUB4', buyData: { quantity: 150, price: 25.80 }, sellData: { quantity: 75, price: 26.20 } },
@@ -61,9 +61,10 @@ const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
 
 interface StockRowProps {
   stock: Stock;
+  onUpdate: (ticker: string, formId: 'buy' | 'sell', values: TOrderData) => void;
 }
 
-const StockRow: React.FC<StockRowProps> = ({ stock }) => {
+const StockRow: React.FC<StockRowProps> = memo(({ stock, onUpdate }) => {
   const initialData = {
     buy: stock.buyData,
     sell: stock.sellData,
@@ -73,10 +74,12 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
     buy: (values: TOrderData) => {
       console.log(`BUY order for ${stock.ticker}:`, values);
       alert(`BUY Order - ${stock.ticker}\n\nQuantity: ${values.quantity}\nPrice: R$ ${values.price.toFixed(2)}\nTotal: R$ ${(values.quantity * values.price).toFixed(2)}`);
+      onUpdate(stock.ticker, 'buy', values);
     },
     sell: (values: TOrderData) => {
       console.log(`SELL order for ${stock.ticker}:`, values);
       alert(`SELL Order - ${stock.ticker}\n\nQuantity: ${values.quantity}\nPrice: R$ ${values.price.toFixed(2)}\nTotal: R$ ${(values.quantity * values.price).toFixed(2)}`);
+      onUpdate(stock.ticker, 'sell', values);
     },
   };
 
@@ -113,9 +116,21 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
       </tr>
     </FormTableProvider>
   );
-};
+});
 
 export const BookOrders: React.FC = () => {
+  const [stocks, setStocks] = useState<Stock[]>(defaultStocks);
+
+  const handleUpdate = useCallback((ticker: string, formId: 'buy' | 'sell', values: TOrderData) => {
+    setStocks(prev => prev.map(stock => {
+      if (stock.ticker !== ticker) return stock;
+      return {
+        ...stock,
+        [formId === 'buy' ? 'buyData' : 'sellData']: values,
+      };
+    }));
+  }, []);
+
   return (
     <div className="bookorders-container">
       <h2>Book Orders</h2>
@@ -141,8 +156,8 @@ export const BookOrders: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {initialStocks.map(stock => (
-            <StockRow key={stock.ticker} stock={stock} />
+          {stocks.map(stock => (
+            <StockRow key={stock.ticker} stock={stock} onUpdate={handleUpdate} />
           ))}
         </tbody>
       </table>

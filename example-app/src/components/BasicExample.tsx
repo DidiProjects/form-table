@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Column, FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
 
@@ -7,7 +7,7 @@ const columns: Column[] = [
   { formId: 'user', field: 'email', type: 'email', label: 'Email', placeholder: 'email@example.com' },
 ];
 
-const initialData = {
+const defaultData = {
   user: { name: 'John Doe', email: 'john@example.com' },
 };
 
@@ -57,6 +57,8 @@ const schemas: SchemaFactory = (yup) => ({
 </FormTableProvider>`;
 
 export const BasicExample: React.FC = () => {
+  const [formData, setFormData] = useState(defaultData);
+
   return (
     <div className="example-section">
       <div className="example-header">
@@ -70,12 +72,14 @@ export const BasicExample: React.FC = () => {
       <div className="example-demo">
         <h3>Live Demo</h3>
         <FormTableProvider
+          key={JSON.stringify(formData)}
           columns={columns}
-          initialData={initialData}
+          initialData={formData}
           schemas={schemas}
           onSubmit={{
             user: (values) => {
               alert(`Submitted!\n\nName: ${values.name}\nEmail: ${values.email}`);
+              setFormData({ user: values });
             },
           }}
           debounceMs={300}
