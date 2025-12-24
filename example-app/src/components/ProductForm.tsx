@@ -1,6 +1,5 @@
 import React from 'react';
-import { Column, FormSchemas, FormSubmitHandlers, FormTableProvider, EditableCell } from '@dspackages/form-table';
-import * as yup from 'yup';
+import { Column, SchemaFactory, FormSubmitHandlers, FormTableProvider, EditableCell } from '@dspackages/form-table';
 
 type TProductData = {
   name: string;
@@ -38,7 +37,7 @@ const columns: Column[] = [
   { formId: 'product', field: 'quantity', type: 'number', label: 'Stock', placeholder: '0' },
 ];
 
-const schema: FormSchemas = {
+const schema: SchemaFactory = (yup) => ({
   product: yup.object().shape({
     name: yup.string().required('Name is required').min(3, 'Min 3 chars'),
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -46,7 +45,7 @@ const schema: FormSchemas = {
     price: yup.number().min(0.01, 'Min $0.01').required('Price is required'),
     quantity: yup.number().min(0, 'Min 0').integer('Must be integer').required('Quantity is required'),
   }),
-};
+});
 
 interface ProductRowProps {
   product: Product;
