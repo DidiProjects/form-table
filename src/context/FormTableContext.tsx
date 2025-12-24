@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useCallback, useRef, useSyncExternalStore } from 'react';
 import * as yup from 'yup';
-import { FieldsState, FieldState, FormsState, Column, FormSchemas, FormSubmitHandlers } from '../types';
+import { FieldsState, FieldState, FormsState, Column, FormSchemas, SchemaFactory, FormSubmitHandlers } from '../types';
 
 type Listener = () => void;
 
@@ -33,7 +33,7 @@ interface FormTableProviderProps {
   children: React.ReactNode;
   columns: Column[];
   initialData: Record<string, Record<string, any>>;
-  schemas: FormSchemas;
+  schemas: FormSchemas | SchemaFactory;
   onSubmit?: FormSubmitHandlers;
   debounceMs?: number;
 }
@@ -44,12 +44,14 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
   children,
   columns,
   initialData,
-  schemas,
+  schemas: schemasProp,
   onSubmit = {},
   debounceMs = 500
 }) => {
   const storeRef = useRef<FormTableStore | null>(null);
   const instanceIdRef = useRef<string>(Math.random().toString(36).substring(2, 9));
+
+  const schemas: FormSchemas = typeof schemasProp === 'function' ? schemasProp(yup) : schemasProp;
 
   if (!storeRef.current) {
     let state: FormsState = {};

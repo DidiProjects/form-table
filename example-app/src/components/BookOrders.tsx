@@ -1,6 +1,5 @@
 import React from 'react';
-import { Column, FormSchemas, FormSubmitHandlers, FormTableProvider, EditableCell, useSelectorContext } from '@dspackages/form-table';
-import * as yup from 'yup';
+import { Column, FormSubmitHandlers, FormTableProvider, EditableCell, useSelectorContext, SchemaFactory } from '@dspackages/form-table';
 
 type TOrderData = {
   quantity: number;
@@ -31,7 +30,7 @@ const sellColumns: Column[] = [
   { formId: 'sell', field: 'quantity', type: 'number', label: 'Quantity', placeholder: '0' },
 ];
 
-const schemas: FormSchemas = {
+const schemas: SchemaFactory = (yup) => ({
   buy: yup.object().shape({
     quantity: yup.number().min(1, 'Min 1').required('Required'),
     price: yup.number().min(0.01, 'Min 0.01').required('Required'),
@@ -40,7 +39,7 @@ const schemas: FormSchemas = {
     quantity: yup.number().min(1, 'Min 1').required('Required'),
     price: yup.number().min(0.01, 'Min 0.01').required('Required'),
   }),
-};
+});
 
 interface VolumeCellProps {
   formId: 'buy' | 'sell';

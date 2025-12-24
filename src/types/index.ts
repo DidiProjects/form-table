@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 
+export type Yup = typeof yup;
+
 export interface FieldState {
   value: any;
   error?: string;
@@ -19,5 +21,7 @@ export interface Column {
 }
 
 export type FormSchemas = Record<string, yup.ObjectSchema<any>>;
+
+export type SchemaFactory = (yup: Yup) => FormSchemas;
 
 export type FormSubmitHandlers = Record<string, (values: any) => void>;
