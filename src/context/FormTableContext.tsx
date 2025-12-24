@@ -7,6 +7,7 @@ type Listener = () => void;
 interface NavigationState {
   activeField: string | null;
   fields: string[];
+  visitedFields: Set<string>;
 }
 
 interface FormTableStore {
@@ -16,6 +17,9 @@ interface FormTableStore {
   getInitialData: () => Record<string, Record<string, any>>;
   setValue: (formId: string, field: string, value: any) => void;
   setActiveField: (field: string | null) => void;
+  markFieldVisited: (formId: string, field: string) => void;
+  hasVisitedAllFields: (formId: string) => boolean;
+  willCompleteAllFields: (formId: string, field: string) => boolean;
   validateFieldSync: (formId: string, field: string) => Promise<boolean>;
   nextField: () => Promise<void>;
   previousField: () => Promise<void>;
@@ -61,7 +65,8 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
 
     let navigation: NavigationState = {
       activeField: null,
-      fields: navigationFields
+      fields: navigationFields,
+      visitedFields: new Set<string>()
     };
 
     const listeners = new Set<Listener>();
@@ -152,6 +157,27 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
     const setActiveField = (field: string | null) => {
       navigation = { ...navigation, activeField: field };
       notifyNavigation();
+    };
+
+    const markFieldVisited = (formId: string, field: string) => {
+      const fieldPath = `${formId}.${field}`;
+      if (!navigation.visitedFields.has(fieldPath)) {
+        const newVisited = new Set(navigation.visitedFields);
+        newVisited.add(fieldPath);
+        navigation = { ...navigation, visitedFields: newVisited };
+        notifyNavigation();
+      }
+    };
+
+    const hasVisitedAllFields = (formId: string): boolean => {
+      const formFields = navigation.fields.filter(f => f.startsWith(`${formId}.`));
+      return formFields.every(f => navigation.visitedFields.has(f));
+    };
+
+    const willCompleteAllFields = (formId: string, field: string): boolean => {
+      const fieldPath = `${formId}.${field}`;
+      const formFields = navigation.fields.filter(f => f.startsWith(`${formId}.`));
+      return formFields.every(f => f === fieldPath || navigation.visitedFields.has(f));
     };
 
     const validateFieldSync = async (formId: string, field: string): Promise<boolean> => {
@@ -261,11 +287,18 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
           });
         }
 
+        const newVisited = new Set(navigation.visitedFields);
+        navigation.fields
+          .filter(f => f.startsWith(`${targetFormId}.`))
+          .forEach(f => newVisited.delete(f));
+
         if (navigation.activeField?.startsWith(`${targetFormId}.`)) {
-          navigation = { ...navigation, activeField: null };
-          notifyNavigation();
+          navigation = { ...navigation, activeField: null, visitedFields: newVisited };
+        } else {
+          navigation = { ...navigation, visitedFields: newVisited };
         }
         notify();
+        notifyNavigation();
       } else {
         debounceTimers.forEach((timer) => clearTimeout(timer));
         debounceTimers.clear();
@@ -278,7 +311,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
           });
         });
 
-        navigation = { ...navigation, activeField: null };
+        navigation = { ...navigation, activeField: null, visitedFields: new Set<string>() };
         notify();
         notifyNavigation();
       }
@@ -291,6 +324,9 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
       getInitialData,
       setValue,
       setActiveField,
+      markFieldVisited,
+      hasVisitedAllFields,
+      willCompleteAllFields,
       validateFieldSync,
       nextField,
       previousField,
@@ -361,6 +397,7 @@ export const useField = (formId: string, field: string) => {
   
   const formFields = navigation.fields.filter(f => f.startsWith(`${formId}.`));
   const isLastField = fieldPath === formFields[formFields.length - 1];
+  const willComplete = store.willCompleteAllFields(formId, field);
 
   const setValue = useCallback((value: any) => {
     store.setValue(formId, field, value);
@@ -369,6 +406,10 @@ export const useField = (formId: string, field: string) => {
   const resetForm = useCallback(() => {
     store.reset(formId);
   }, [store, formId]);
+
+  const markVisited = useCallback(() => {
+    store.markFieldVisited(formId, field);
+  }, [store, formId, field]);
 
   return {
     value: fieldState.value,
@@ -381,6 +422,8 @@ export const useField = (formId: string, field: string) => {
     submit: store.submit,
     resetForm,
     isLastField,
+    willComplete,
+    markVisited,
     instanceId: store.instanceId
   };
 };
