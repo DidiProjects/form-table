@@ -401,13 +401,18 @@ input[type="number"] {
 /* Keyboard Shortcuts Table - Light */
 .shortcuts-table {
   width: 100%;
-  max-width: 500px;
   border-collapse: collapse;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
+}
+
+.shortcuts-table th:first-child,
+.shortcuts-table td:first-child {
+  width: 180px;
 }
 
 .shortcuts-table th {
@@ -700,4 +705,119 @@ input[type="number"] {
 ::selection {
   background: rgba(107, 114, 128, 0.2);
   color: var(--text-primary);
+}
+
+/* Virtualized Table */
+.virtual-table-container {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.virtual-header {
+  display: flex;
+  background: #f9fafb;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #374151;
+}
+
+.virtual-header .buy-header {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.virtual-header .sell-header {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.virtual-row {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.virtual-row:hover {
+  background: #f9fafb;
+}
+
+.virtual-row-inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.virtual-cell {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  height: 100%;
+}
+
+.virtual-cell.virtual-id {
+  width: 60px;
+  min-width: 60px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  background: #f9fafb;
+  justify-content: center;
+}
+
+.virtual-cell.virtual-ticker {
+  width: 80px;
+  min-width: 80px;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: 'JetBrains Mono', monospace;
+  background: #f3f4f6;
+}
+
+.virtual-cell.virtual-volume {
+  width: 120px;
+  min-width: 120px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  justify-content: flex-end;
+}
+
+.virtual-cell.virtual-input {
+  width: 100px;
+  min-width: 100px;
+  flex: 1;
+}
+
+.virtual-volume-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 12px;
+  width: 120px;
+  min-width: 120px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.virtual-volume-cell.volume-buy {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.virtual-volume-cell.volume-sell {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.virtual-row .editable-cell {
+  padding: 4px;
+}
+
+.virtual-row .editable-cell input {
+  padding: 8px 10px;
+  font-size: 0.85rem;
 }

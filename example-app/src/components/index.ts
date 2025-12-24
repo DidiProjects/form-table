@@ -7,3 +7,4 @@ export { MultipleFormsExample } from './MultipleFormsExample';
 export { SelectFieldsExample } from './SelectFieldsExample';
 export { ValidationExample } from './ValidationExample';
 export { KeyboardNav } from './KeyboardNav';
+export { VirtualizedExample } from './VirtualizedExample';

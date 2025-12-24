@@ -8,9 +8,10 @@ import {
   SelectFieldsExample,
   ValidationExample,
   KeyboardNav,
+  VirtualizedExample,
 } from './components';
 
-type TabId = 'intro' | 'basic' | 'computed' | 'multiple' | 'select' | 'validation';
+type TabId = 'intro' | 'basic' | 'computed' | 'multiple' | 'select' | 'validation' | 'virtualized';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'intro', label: 'Getting Started' },
@@ -19,6 +20,7 @@ const tabs: { id: TabId; label: string }[] = [
   { id: 'multiple', label: 'Multiple Forms' },
   { id: 'select', label: 'Select Fields' },
   { id: 'validation', label: 'Validation' },
+  { id: 'virtualized', label: 'Virtualized (1K)' },
 ];
 
 function App() {
@@ -53,6 +55,7 @@ function App() {
         {activeTab === 'multiple' && <MultipleFormsExample />}
         {activeTab === 'select' && <SelectFieldsExample />}
         {activeTab === 'validation' && <ValidationExample />}
+        {activeTab === 'virtualized' && <VirtualizedExample />}
       </main>
 
       <footer className="app-footer">
