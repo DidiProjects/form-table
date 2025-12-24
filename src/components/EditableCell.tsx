@@ -50,6 +50,10 @@ export const EditableCell: React.FC<EditableCellProps> = ({
         markVisited();
         nextField();
       }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      resetForm();
+      inputRef.current?.blur();
     }
   };
 
