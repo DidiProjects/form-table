@@ -10,14 +10,17 @@ interface NavigationState {
 }
 
 interface FormTableStore {
+  instanceId: string;
   getState: () => FormsState;
   getNavigation: () => NavigationState;
+  getInitialData: () => Record<string, Record<string, any>>;
   setValue: (formId: string, field: string, value: any) => void;
   setActiveField: (field: string | null) => void;
   validateFieldSync: (formId: string, field: string) => Promise<boolean>;
   nextField: () => Promise<void>;
   previousField: () => Promise<void>;
   submit: () => Promise<void>;
+  reset: (formId?: string) => void;
   subscribe: (listener: Listener) => () => void;
   subscribeNavigation: (listener: Listener) => () => void;
 }
@@ -42,6 +45,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
   debounceMs = 500
 }) => {
   const storeRef = useRef<FormTableStore | null>(null);
+  const instanceIdRef = useRef<string>(Math.random().toString(36).substring(2, 9));
 
   if (!storeRef.current) {
     let state: FormsState = {};
@@ -235,15 +239,63 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
       submitHandler(values);
     };
 
+    const getInitialData = () => initialData;
+
+    const reset = (targetFormId?: string) => {
+      if (targetFormId) {
+        debounceTimers.forEach((timer, key) => {
+          if (key.startsWith(`${targetFormId}.`)) {
+            clearTimeout(timer);
+            debounceTimers.delete(key);
+          }
+        });
+
+        const formInitialData = initialData[targetFormId];
+        if (formInitialData) {
+          state = {
+            ...state,
+            [targetFormId]: {}
+          };
+          Object.entries(formInitialData).forEach(([field, value]) => {
+            state[targetFormId][field] = { value, error: undefined };
+          });
+        }
+
+        if (navigation.activeField?.startsWith(`${targetFormId}.`)) {
+          navigation = { ...navigation, activeField: null };
+          notifyNavigation();
+        }
+        notify();
+      } else {
+        debounceTimers.forEach((timer) => clearTimeout(timer));
+        debounceTimers.clear();
+
+        state = {};
+        Object.entries(initialData).forEach(([formId, formData]) => {
+          state[formId] = {};
+          Object.entries(formData).forEach(([field, value]) => {
+            state[formId][field] = { value, error: undefined };
+          });
+        });
+
+        navigation = { ...navigation, activeField: null };
+        notify();
+        notifyNavigation();
+      }
+    };
+
     storeRef.current = {
+      instanceId: instanceIdRef.current,
       getState,
       getNavigation,
+      getInitialData,
       setValue,
       setActiveField,
       validateFieldSync,
       nextField,
       previousField,
       submit,
+      reset,
       subscribe,
       subscribeNavigation
     };
@@ -289,6 +341,7 @@ export const useNavigation = () => {
     nextField: store.nextField,
     previousField: store.previousField,
     submit: store.submit,
+    reset: store.reset,
     isLastField: navigation.activeField === navigation.fields[navigation.fields.length - 1]
   };
 };
@@ -313,6 +366,10 @@ export const useField = (formId: string, field: string) => {
     store.setValue(formId, field, value);
   }, [store, formId, field]);
 
+  const resetForm = useCallback(() => {
+    store.reset(formId);
+  }, [store, formId]);
+
   return {
     value: fieldState.value,
     error: fieldState.error,
@@ -322,6 +379,8 @@ export const useField = (formId: string, field: string) => {
     nextField: store.nextField,
     previousField: store.previousField,
     submit: store.submit,
-    isLastField
+    resetForm,
+    isLastField,
+    instanceId: store.instanceId
   };
 };

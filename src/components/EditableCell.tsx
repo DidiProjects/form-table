@@ -17,7 +17,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   options
 }) => {
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
-  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, isLastField } = useField(formId, field);
+  const { value, error, setValue, isActive, setActive, nextField, previousField, submit, resetForm, isLastField, instanceId } = useField(formId, field);
 
   useEffect(() => {
     if (isActive && inputRef.current) {
@@ -54,6 +54,21 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     setActive();
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
+    const targetInstanceId = relatedTarget?.dataset?.instanceid;
+    const targetFormId = relatedTarget?.dataset?.formid;
+    
+    if (targetInstanceId !== instanceId || targetFormId !== formId) {
+      resetForm();
+    }
+  };
+
+  const dataAttrs = {
+    'data-instanceid': instanceId,
+    'data-formid': formId
+  };
+
   if (type === 'select' && options) {
     return (
       <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''}`}>
@@ -63,7 +78,9 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
+          onBlur={handleBlur}
           className="cell-input"
+          {...dataAttrs}
         >
           <option value="">{placeholder || 'Select...'}</option>
           {options.map((opt) => (
@@ -84,8 +101,10 @@ export const EditableCell: React.FC<EditableCellProps> = ({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder={placeholder}
         className="cell-input"
+        {...dataAttrs}
       />
       {error && <span className="cell-error">{error}</span>}
     </td>
