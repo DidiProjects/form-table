@@ -59,11 +59,7 @@ const TestWrapper: React.FC<TestWrapperProps> = ({
     onSubmit={onSubmit}
     debounceMs={debounceMs}
   >
-    <table>
-      <tbody>
-        <tr>{children}</tr>
-      </tbody>
-    </table>
+    <div className="test-table-row">{children}</div>
   </FormTableProvider>
 );
 
@@ -145,7 +141,7 @@ describe('EditableCell', () => {
         </TestWrapper>
       );
 
-      const cell = screen.getByRole('cell');
+      const cell = document.querySelector('.editable-cell');
       expect(cell).not.toHaveClass('is-active');
 
       fireEvent.focus(screen.getByRole('textbox'));
@@ -479,7 +475,7 @@ describe('EditableCell', () => {
         </TestWrapper>
       );
 
-      const cell = screen.getByRole('cell');
+      const cell = document.querySelector('.editable-cell');
       const input = screen.getByDisplayValue('John');
 
       expect(cell).not.toHaveClass('has-error');

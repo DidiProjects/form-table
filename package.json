@@ -1,6 +1,6 @@
 {
   "name": "@dspackages/form-table",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Form manager for tables with editable cells, Tab navigation, Yup validation and context",
   "type": "module",
   "main": "dist/index.js",
@@ -39,13 +39,15 @@
   },
   "keywords": [
     "react",
-    "table",
     "form",
-    "editable",
-    "typescript",
+    "table",
+    "homebroker",
+    "input-table",
+    "spreadsheet",
     "yup",
     "validation",
-    "context"
+    "navigation",
+    "typescript"
   ],
   "author": "Your Name",
   "license": "MIT",
