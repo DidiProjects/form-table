@@ -1,138 +1,132 @@
-# React Component Template - Successfully Dehydrated!
+# FormTable
 
-## Transformation Completed
+A React form manager for tables with editable cells, keyboard navigation, Yup validation, and context-based state management. Built for performance, flexibility, and modern UI.
 
-Your package `@dspackages/highlight-text` has been transformed into a **generic template** reusable for creating React components.
+## Features
 
-## What was changed:
+- Editable cells: text, number, email, select
+- Keyboard navigation: Tab, Shift+Tab, Enter, Escape
+- Validation with Yup via SchemaFactory
+- Context-based state management
+- Visual states: active, error, self, modified
+- Responsive, accessible, and fast
+- Virtualized support for large tables
 
-### 1. **package.json** - Generic
-- Name: `@your-scope/your-component-name`
-- Generic description
-- Author: `Your Name`
-- Repository: `your-username/your-repo`
+## Installation
 
-### 2. **Main Component** (`src/index.tsx`)
-- **Before**: HighlightText specific
-- **Now**: YourComponent generic with basic props:
-  - `title`: optional string
-  - `className`: style customization
-  - `disabled`: disabled state
-  - `onClick`: click callback
-  - `children`: React content
-
-### 3. **Styles** (`src/index.css`) 
-- Generic CSS with:
-  - Basic container
-  - Disabled state
-  - Hover effects
-  - Responsive layout
-
-### 4. **Utilitários** (`src/utils/`)
-- **helpers.ts**: Funções auxiliares úteis:
-  - `formatString`: formatação de strings
-  - `isValidElement`: element validation
-  - `generateId`: geração de IDs únicos
-  - `debounce`: debounce function
-
-### 5. **Testes** - Completamente genéricos
-- Testes do componente principal
-- Testes dos utilitários
-- Coverage: 21 tests passing
-
-### 6. **Example App** (`example-app/`)
-- Demo interativa do template
-- Multiple usage examples
-- Interface para testar props
-
-### 7. **Documentação**
-- README.md genérico com instruções
-- TEMPLATE_GUIDE.md com guia completo
-- USAGE.md atualizado
-
-## How to use this template:
-
-### 1. Configure suas informações
 ```bash
-# Edite package.json com seus dados
-{
-  "name": "@sua-empresa/seu-componente",
-  "description": "Your component description",
-  "author": "Seu Nome"
-}
+npm install @dspackages/form-table yup
 ```
 
-### 2. Implemente seu componente
+## Basic Usage
+
 ```tsx
-// src/index.tsx
-const MeuComponente = ({ title, className, ...props }: ComponentProps) => {
-  // Sua lógica aqui
-  return (
-    <div className={className}>
-      {/* Seu componente */}
-    </div>
-  );
-};
-```
+import React, { useState } from 'react';
+import { FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
+import * as yup from 'yup';
 
-### 4. Personalize estilos
-```css
-/* src/index.css */
-.meu-componente {
-  /* Seus estilos */
+const columns = [
+  { formId: 'user', field: 'name', type: 'text', label: 'Name', placeholder: 'Enter name' },
+  { formId: 'user', field: 'email', type: 'email', label: 'Email', placeholder: 'email@example.com' },
+];
+
+const defaultData = { user: { name: '', email: '' } };
+
+const schemas: SchemaFactory = (yup) => ({
+  user: yup.object().shape({
+    name: yup.string().required('Name is required').min(2, 'Min 2 characters'),
+    email: yup.string().email('Invalid email').required('Email is required'),
+  }),
+});
+
+export default function App() {
+  return (
+    <FormTableProvider
+      columns={columns}
+      initialData={defaultData}
+      schemas={schemas}
+      onSubmit={{ user: (values) => console.log(values) }}
+    >
+      <div className="demo-table">
+        <div className="demo-header">
+          {columns.map(col => (
+            <div key={col.field} className="demo-cell">{col.label}</div>
+          ))}
+        </div>
+        <div className="demo-row">
+          {columns.map(col => (
+            <EditableCell
+              key={col.field}
+              formId={col.formId}
+              field={col.field}
+              type={col.type}
+              placeholder={col.placeholder}
+            />
+          ))}
+        </div>
+      </div>
+    </FormTableProvider>
+  );
 }
 ```
 
-### 5. Execute e teste
-```bash
-npm test           # Testes
-npm run build      # Build
-cd example-app && npm start  # Demo
+## Keyboard Navigation
+
+| Key           | Action                       |
+|---------------|-----------------------------|
+| Tab           | Next cell                    |
+| Shift + Tab   | Previous cell                |
+| Enter         | Submit (if all visited/self) |
+| Escape        | Reset form                   |
+
+## Validation
+
+- Yup schemas are injected via SchemaFactory
+- Validation runs on blur and change
+- Error messages and error styling are automatic
+
+## Styling
+
+Default styles use flexbox for table layout:
+
+```css
+.demo-table { display: flex; flex-direction: column; }
+.demo-header, .demo-row { display: flex; }
+.demo-cell { flex: 1; padding: 8px; }
+.editable-cell { /* cell styles */ }
+.is-active { /* active cell styles */ }
+.has-error { /* error cell styles */ }
+.is-self { /* self cell styles */ }
 ```
 
-## Included Resources
+You can override or extend these classes in your own CSS.
 
-### ⚡ Performance
-- React.memo otimizado
-- Comparação de props eficiente
-- CSS otimizado
+## Advanced Usage
 
-### Testing
-- Vitest configurado
-- React Testing Library
-- Cobertura de testes
-- Testes genéricos reutilizáveis
+- Multiple forms per row (see MultipleFormsExample)
+- Virtualized tables for large datasets (see VirtualizedExample)
+- Custom cell rendering
+- Computed values and derived cells
 
-### Build & Deploy
-- TypeScript + Rollup
-- Múltiplos formatos (CJS/ESM)
-- Scripts de publicação automática
-- CSS incluído no bundle
+## Example App
 
-### Developer Experience
-- TypeScript completo
-- IntelliSense suportado
-- Hot reload in example
-- Scripts npm prontos
+To run the example app:
 
-## Final Status
+```bash
+cd example-app
+npm install
+npm start
+```
 
-**Template 100% functional and ready to use!**
+## Compatibility
 
-- Tests: 21/21 passing
-- Build: Generated successfully
-- TypeScript: No errors
-- Example: Working
-- Documentation: Complete
+- React >= 18
+- TypeScript >= 4.0
+- Modern browsers
+
+## License
+
+MIT
 
 ---
-
-**Now you have a professional template to create any reusable React component!**
-
-### Próximos passos:
-1. Personalize com seu componente
-2. Atualize a documentação  
-3. Configure seu repositório Git
-4. Publique no NPM
-
-**Happy Coding! 🎊**
+Made by Diego (@dspackages)

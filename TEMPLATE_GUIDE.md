@@ -1,148 +1,132 @@
-# Guide to Using this Template
+# FormTable
 
-This is a complete template for creating reusable and publishable React components. Follow the steps below to customize and create your own component.
+A React form manager for tables with editable cells, keyboard navigation, Yup validation, and context-based state management. Built for performance, flexibility, and modern UI.
 
-## Quick Start
+## Features
 
-### 1. Clone the Template
+- Editable cells: text, number, email, select
+- Keyboard navigation: Tab, Shift+Tab, Enter, Escape
+- Validation with Yup via SchemaFactory
+- Context-based state management
+- Visual states: active, error, self, modified
+- Responsive, accessible, and fast
+- Virtualized support for large tables
+
+## Installation
+
 ```bash
-git clone <your-template-url>
-cd react-component-template
-npm install
+npm install @dspackages/form-table yup
 ```
 
-### 2. Rename and Configure
-1. **Update package.json** with your information:
-   - `name`: `@your-scope/your-component-name`
-   - `description`: Your component description
-   - `repository`: Your repository URL
-   - `author`: Your name
+## Basic Usage
 
-### 3. Implemente seu Componente
-
-#### Edite `src/index.tsx`:
 ```tsx
-import React from 'react';
-import { ComponentProps } from './utils';
-import './index.css';
+import React, { useState } from 'react';
+import { FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
+import * as yup from 'yup';
 
-const MeuComponente = ({ title, className = 'meu-componente', ...props }: ComponentProps) => {
+const columns = [
+  { formId: 'user', field: 'name', type: 'text', label: 'Name', placeholder: 'Enter name' },
+  { formId: 'user', field: 'email', type: 'email', label: 'Email', placeholder: 'email@example.com' },
+];
+
+const defaultData = { user: { name: '', email: '' } };
+
+const schemas: SchemaFactory = (yup) => ({
+  user: yup.object().shape({
+    name: yup.string().required('Name is required').min(2, 'Min 2 characters'),
+    email: yup.string().email('Invalid email').required('Email is required'),
+  }),
+});
+
+export default function App() {
   return (
-    <div className={className}>
-      {title && <h3>{title}</h3>}
-      {/* Sua lógica aqui */}
-    </div>
+    <FormTableProvider
+      columns={columns}
+      initialData={defaultData}
+      schemas={schemas}
+      onSubmit={{ user: (values) => console.log(values) }}
+    >
+      <div className="demo-table">
+        <div className="demo-header">
+          {columns.map(col => (
+            <div key={col.field} className="demo-cell">{col.label}</div>
+          ))}
+        </div>
+        <div className="demo-row">
+          {columns.map(col => (
+            <EditableCell
+              key={col.field}
+              formId={col.formId}
+              field={col.field}
+              type={col.type}
+              placeholder={col.placeholder}
+            />
+          ))}
+        </div>
+      </div>
+    </FormTableProvider>
   );
-};
-
-export default MeuComponente;
-```
-
-### 4. Atualize os Estilos
-Edite `src/index.css` com os estilos do seu componente.
-
-### 5. Escreva Testes
-Atualize `src/__tests__/YourComponent.test.tsx` com testes específicos.
-
-### 6. Teste o Componente
-```bash
-npm test                 # Executa testes
-npm run build           # Gera build
-cd example-app && npm start  # Test in example
-```
-
-## Customization Checklist
-
-- [ ] Atualizar `package.json` com suas informações
-- [ ] Implementar componente em `src/index.tsx`
-- [ ] Personalizar estilos em `src/index.css`
-- [ ] Atualizar testes em `src/__tests__/`
-- [ ] Modify example in `example-app/src/App.tsx`
-- [ ] Atualizar `README.md` com documentação
-- [ ] Configurar repositório Git
-
-## Template Usage Examples
-
-### Componente de Card
-```tsx
-interface CardProps {
-  title: string;
-  image?: string;
-  action?: () => void;
-  children: React.ReactNode;
 }
 ```
 
-### Componente de Modal
-```tsx  
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title?: string;
-  children: React.ReactNode;
-}
+## Keyboard Navigation
+
+| Key           | Action                       |
+|---------------|-----------------------------|
+| Tab           | Next cell                    |
+| Shift + Tab   | Previous cell                |
+| Enter         | Submit (if all visited/self) |
+| Escape        | Reset form                   |
+
+## Validation
+
+- Yup schemas are injected via SchemaFactory
+- Validation runs on blur and change
+- Error messages and error styling are automatic
+
+## Styling
+
+Default styles use flexbox for table layout:
+
+```css
+.demo-table { display: flex; flex-direction: column; }
+.demo-header, .demo-row { display: flex; }
+.demo-cell { flex: 1; padding: 8px; }
+.editable-cell { /* cell styles */ }
+.is-active { /* active cell styles */ }
+.has-error { /* error cell styles */ }
+.is-self { /* self cell styles */ }
 ```
 
-### Componente de Input
-```tsx
-interface InputProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  error?: string;
-}
-```
+You can override or extend these classes in your own CSS.
 
-## Publication
+## Advanced Usage
 
-### Primeiro Build
-```bash
-npm run build
-npm run validate  # Executa testes e validações
-```
+- Multiple forms per row (see MultipleFormsExample)
+- Virtualized tables for large datasets (see VirtualizedExample)
+- Custom cell rendering
+- Computed values and derived cells
 
-### Publicar no NPM
-```bash
-npm login
-npm run publish:patch  # ou minor/major
-```
+## Example App
 
-## 💡 Dicas e Boas Práticas
-
-### Estrutura de Props
-- Use interfaces TypeScript bem definidas
-- Inclua props opcionais com valores padrão
-- Documente props complexas
-
-### Testes
-- Teste comportamentos, não implementação
-- Use snapshots para mudanças de UI
-- Teste casos extremos e edge cases
-
-### Performance  
-- Use React.memo quando necessário
-- Evite criação de objetos/funções em render
-- Use useCallback/useMemo apropriadamente
-
-### Documentação
-- Clear README with examples
-- Props bem documentadas  
-- Varied usage examples
-
-## Available Scripts
+To run the example app:
 
 ```bash
-npm test              # Testes
-npm run test:watch    # Testes em modo watch
-npm run test:coverage # Cobertura de testes
-npm run build         # Build de produção
-npm run validate      # Complete validation
-npm run publish:patch # Publica versão patch
-npm run publish:minor # Publica versão minor
-npm run publish:major # Publica versão major
+cd example-app
+npm install
+npm start
 ```
+
+## Compatibility
+
+- React >= 18
+- TypeScript >= 4.0
+- Modern browsers
+
+## License
+
+MIT
 
 ---
-
-**🎉 Pronto! Agora você tem um template completo para criar componentes React profissionais e reutilizáveis!**
+Made by Diego (@dspackages)
