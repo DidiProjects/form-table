@@ -84,28 +84,24 @@ export const BasicExample: React.FC = () => {
           }}
           debounceMs={300}
         >
-          <table className="demo-table">
-            <thead>
-              <tr>
-                {columns.map((col) => (
-                  <th key={col.field}>{col.label}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                {columns.map((col) => (
-                  <EditableCell
-                    key={col.field}
-                    formId={col.formId}
-                    field={col.field}
-                    type={col.type}
-                    placeholder={col.placeholder}
-                  />
-                ))}
-              </tr>
-            </tbody>
-          </table>
+          <div className="demo-table">
+            <div className="demo-header">
+              {columns.map((col) => (
+                <div key={col.field} className="demo-cell">{col.label}</div>
+              ))}
+            </div>
+            <div className="demo-row">
+              {columns.map((col) => (
+                <EditableCell
+                  key={col.field}
+                  formId={col.formId}
+                  field={col.field}
+                  type={col.type}
+                  placeholder={col.placeholder}
+                />
+              ))}
+            </div>
+          </div>
         </FormTableProvider>
         <p className="demo-hint">Press Tab to navigate, Enter on last field to submit, Escape to reset</p>
       </div>

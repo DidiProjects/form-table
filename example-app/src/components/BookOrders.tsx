@@ -53,9 +53,9 @@ const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
   });
 
   return (
-    <td className={`volume-cell volume-${formId}`}>
+    <div className={`demo-cell volume-cell volume-${formId}`}>
       {volume.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-    </td>
+    </div>
   );
 };
 
@@ -91,8 +91,8 @@ const StockRow: React.FC<StockRowProps> = memo(({ stock, onUpdate }) => {
       onSubmit={onSubmit}
       debounceMs={300}
     >
-      <tr>
-        <td className="ticker-cell">{stock.ticker}</td>
+      <div className="demo-row">
+        <div className="demo-cell ticker-cell">{stock.ticker}</div>
         <VolumeCell formId="buy" />
         {buyColumns.map(col => (
           <EditableCell
@@ -113,7 +113,7 @@ const StockRow: React.FC<StockRowProps> = memo(({ stock, onUpdate }) => {
           />
         ))}
         <VolumeCell formId="sell" />
-      </tr>
+      </div>
     </FormTableProvider>
   );
 });
@@ -137,30 +137,24 @@ export const BookOrders: React.FC = () => {
       <p className="bookorders-instructions">
         Tab navigates within each form (Buy/Sell). Press Enter on the last field to submit the order.
       </p>
-      <table className="form-table bookorders-table">
-        <thead>
-          <tr>
-            <th rowSpan={2} className="ticker-header">Ticker</th>
-            <th colSpan={buyColumns.length + 1} className="group-header buy-header">Buy</th>
-            <th colSpan={sellColumns.length + 1} className="group-header sell-header">Sell</th>
-          </tr>
-          <tr>
-            <th className="volume-header">Volume</th>
-            {buyColumns.map(col => (
-              <th key={`buy-${col.field}`}>{col.label}</th>
-            ))}
-            {sellColumns.map(col => (
-              <th key={`sell-${col.field}`}>{col.label}</th>
-            ))}
-            <th className="volume-header">Volume</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div className="demo-table bookorders-table">
+        <div className="demo-header">
+          <div className="demo-cell ticker-header">Ticker</div>
+          <div className="demo-cell volume-header buy-header">Volume</div>
+          {buyColumns.map(col => (
+            <div key={`buy-${col.field}`} className="demo-cell buy-header">{col.label}</div>
+          ))}
+          {sellColumns.map(col => (
+            <div key={`sell-${col.field}`} className="demo-cell sell-header">{col.label}</div>
+          ))}
+          <div className="demo-cell volume-header sell-header">Volume</div>
+        </div>
+        <div className="demo-body">
           {stocks.map(stock => (
             <StockRow key={stock.ticker} stock={stock} onUpdate={handleUpdate} />
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 };

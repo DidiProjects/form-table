@@ -251,7 +251,6 @@ input[type="number"] {
 /* Demo Table - Light Theme */
 .demo-table {
   width: 100%;
-  border-collapse: collapse;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
@@ -259,34 +258,87 @@ input[type="number"] {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.demo-table thead th {
+.demo-header {
+  display: flex;
   background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.demo-header .demo-cell {
   color: #374151;
   padding: 12px 16px;
   font-weight: 600;
   font-size: 0.8rem;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  flex: 1;
 }
 
-.demo-table tbody tr {
+.demo-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-row {
+  display: flex;
   border-bottom: 1px solid #f3f4f6;
   transition: background 0.15s ease;
 }
 
-.demo-table tbody tr:last-child {
+.demo-row:last-child {
   border-bottom: none;
 }
 
-.demo-table tbody tr:hover {
+.demo-row:hover {
   background: #f9fafb;
 }
 
-.demo-table td {
+.demo-cell {
   padding: 8px 12px;
   color: #1f2937;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.demo-header .buy-header {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.demo-header .sell-header {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.demo-cell.ticker-cell {
+  font-weight: 600;
+  color: #1f2937;
+  background: #f3f4f6;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.demo-cell.volume-cell {
+  font-weight: 500;
+  justify-content: flex-end;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.demo-cell.volume-buy {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.demo-cell.volume-sell {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.demo-cell.computed-cell {
+  background: #f0fdf4;
+  color: #16a34a;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .demo-hint {
@@ -299,6 +351,9 @@ input[type="number"] {
 .editable-cell {
   background: transparent;
   padding: 4px;
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .editable-cell input,

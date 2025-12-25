@@ -60,7 +60,7 @@ const UserRow: React.FC<UserRowProps> = memo(({ data, onUpdate, idx }) => {
       }}
       debounceMs={500}
     >
-      <tr>
+      <div className="demo-row">
         {columns.map((col) => (
           <EditableCell
             key={col.field}
@@ -70,7 +70,7 @@ const UserRow: React.FC<UserRowProps> = memo(({ data, onUpdate, idx }) => {
             placeholder={col.placeholder}
           />
         ))}
-      </tr>
+      </div>
     </FormTableProvider>
   );
 });
@@ -142,20 +142,18 @@ export const ValidationExample: React.FC = () => {
 
       <div className="example-demo">
         <h3>Live Demo</h3>
-        <table className="demo-table">
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col.field}>{col.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
+        <div className="demo-table">
+          <div className="demo-header">
+            {columns.map((col) => (
+              <div key={col.field} className="demo-cell">{col.label}</div>
+            ))}
+          </div>
+          <div className="demo-body">
             {users.map((user, idx) => (
               <UserRow key={idx} data={user} onUpdate={handleUpdate} idx={idx} />
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
         <p className="demo-hint">First row has validation errors - fix them to submit!</p>
       </div>
 

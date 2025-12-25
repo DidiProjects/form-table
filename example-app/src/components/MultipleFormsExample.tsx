@@ -35,9 +35,9 @@ const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
   });
 
   return (
-    <td className={`volume-cell volume-${formId}`}>
+    <div className={`demo-cell volume-cell volume-${formId}`}>
       {volume.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-    </td>
+    </div>
   );
 };
 
@@ -68,8 +68,8 @@ const StockRow: React.FC<StockRowProps> = memo(({ ticker, buyData, sellData, onU
       onSubmit={onSubmit}
       debounceMs={300}
     >
-      <tr>
-        <td className="ticker-cell">{ticker}</td>
+      <div className="demo-row">
+        <div className="demo-cell ticker-cell">{ticker}</div>
         <VolumeCell formId="buy" />
         {buyColumns.map((col) => (
           <EditableCell key={`buy-${col.field}`} formId="buy" field={col.field} type="number" placeholder={col.placeholder} />
@@ -78,7 +78,7 @@ const StockRow: React.FC<StockRowProps> = memo(({ ticker, buyData, sellData, onU
           <EditableCell key={`sell-${col.field}`} formId="sell" field={col.field} type="number" placeholder={col.placeholder} />
         ))}
         <VolumeCell formId="sell" />
-      </tr>
+      </div>
     </FormTableProvider>
   );
 });
@@ -158,28 +158,22 @@ export const MultipleFormsExample: React.FC = () => {
 
       <div className="example-demo">
         <h3>Live Demo</h3>
-        <table className="demo-table trading-table">
-          <thead>
-            <tr>
-              <th rowSpan={2}>Ticker</th>
-              <th colSpan={3} className="buy-header">Buy</th>
-              <th colSpan={3} className="sell-header">Sell</th>
-            </tr>
-            <tr>
-              <th>Volume</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Price</th>
-              <th>Qty</th>
-              <th>Volume</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div className="demo-table trading-table">
+          <div className="demo-header">
+            <div className="demo-cell">Ticker</div>
+            <div className="demo-cell buy-header">Volume</div>
+            <div className="demo-cell buy-header">Qty</div>
+            <div className="demo-cell buy-header">Price</div>
+            <div className="demo-cell sell-header">Price</div>
+            <div className="demo-cell sell-header">Qty</div>
+            <div className="demo-cell sell-header">Volume</div>
+          </div>
+          <div className="demo-body">
             {stocks.map((stock) => (
               <StockRow key={stock.ticker} {...stock} onUpdate={handleUpdate} />
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
         <p className="demo-hint">Tab stays within Buy or Sell form. Enter submits that form only.</p>
       </div>
 

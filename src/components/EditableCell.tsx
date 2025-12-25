@@ -85,7 +85,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   if (type === 'select' && options) {
     return (
-      <div className={`editable-cell virtual-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
+      <div className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
         <select
           ref={inputRef as React.RefObject<HTMLSelectElement>}
           value={value ?? ''}
@@ -109,7 +109,6 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   const classes = useMemo(() => (
     [
       'editable-cell',
-      'virtual-cell',
       `${field}-${formId}-cell`,
       error ? 'has-error' : '',
       isActive ? 'is-active' : '',

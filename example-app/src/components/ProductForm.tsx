@@ -71,7 +71,7 @@ const ProductRow: React.FC<ProductRowProps> = ({ product }) => {
       onSubmit={onSubmit}
       debounceMs={300}
     >
-      <tr>
+      <div className="demo-row">
         {columns.map(col => (
           <EditableCell
             key={col.field}
@@ -82,7 +82,7 @@ const ProductRow: React.FC<ProductRowProps> = ({ product }) => {
             options={col.options}
           />
         ))}
-      </tr>
+      </div>
     </FormTableProvider>
   );
 };
@@ -95,20 +95,18 @@ export const ProductForm: React.FC = () => {
         Single form per row with multiple field types: text, email, select, and number.
         Tab navigates through all fields. Press Enter on the last field to submit.
       </p>
-      <table className="form-table productform-table">
-        <thead>
-          <tr>
-            {columns.map(col => (
-              <th key={col.field}>{col.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
+      <div className="demo-table productform-table">
+        <div className="demo-header">
+          {columns.map(col => (
+            <div key={col.field} className="demo-cell">{col.label}</div>
+          ))}
+        </div>
+        <div className="demo-body">
           {initialProducts.map(product => (
             <ProductRow key={product.id} product={product} />
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 };

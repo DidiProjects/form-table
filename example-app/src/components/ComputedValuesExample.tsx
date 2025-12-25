@@ -26,9 +26,9 @@ const TotalCell: React.FC = () => {
   });
 
   return (
-    <td className="computed-cell">
+    <div className="demo-cell computed-cell">
       <strong>{total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</strong>
-    </td>
+    </div>
   );
 };
 
@@ -90,22 +90,18 @@ export const ComputedValuesExample: React.FC = () => {
           }}
           debounceMs={300}
         >
-          <table className="demo-table">
-            <thead>
-              <tr>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <EditableCell formId="calc" field="quantity" type="number" placeholder="0" />
-                <EditableCell formId="calc" field="price" type="number" placeholder="0.00" />
-                <TotalCell />
-              </tr>
-            </tbody>
-          </table>
+          <div className="demo-table">
+            <div className="demo-header">
+              <div className="demo-cell">Quantity</div>
+              <div className="demo-cell">Unit Price</div>
+              <div className="demo-cell">Total</div>
+            </div>
+            <div className="demo-row">
+              <EditableCell formId="calc" field="quantity" type="number" placeholder="0" />
+              <EditableCell formId="calc" field="price" type="number" placeholder="0.00" />
+              <TotalCell />
+            </div>
+          </div>
         </FormTableProvider>
         <p className="demo-hint">Change quantity or price - total updates in real-time!</p>
       </div>

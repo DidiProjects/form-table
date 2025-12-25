@@ -59,7 +59,7 @@ const ProductRow: React.FC<ProductRowProps> = memo(({ data, onUpdate, idx }) => 
       }}
       debounceMs={300}
     >
-      <tr>
+      <div className="demo-row">
         {columns.map((col) => (
           <EditableCell
             key={col.field}
@@ -70,7 +70,7 @@ const ProductRow: React.FC<ProductRowProps> = memo(({ data, onUpdate, idx }) => 
             options={col.options}
           />
         ))}
-      </tr>
+      </div>
     </FormTableProvider>
   );
 });
@@ -136,20 +136,18 @@ export const SelectFieldsExample: React.FC = () => {
 
       <div className="example-demo">
         <h3>Live Demo</h3>
-        <table className="demo-table">
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col.field}>{col.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
+        <div className="demo-table">
+          <div className="demo-header">
+            {columns.map((col) => (
+              <div key={col.field} className="demo-cell">{col.label}</div>
+            ))}
+          </div>
+          <div className="demo-body">
             {products.map((product, idx) => (
               <ProductRow key={idx} data={product} onUpdate={handleUpdate} idx={idx} />
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
         <p className="demo-hint">Click dropdown or use keyboard arrows to change selection</p>
       </div>
 
