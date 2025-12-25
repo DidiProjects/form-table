@@ -744,21 +744,27 @@ input[type="number"] {
 .virtual-table {
   width: 100%;
   border-collapse: collapse;
+  display: block;
 }
 
-.virtual-table-row {
-  width: 100%;
-  border-collapse: collapse;
+.virtual-table thead {
+  display: block;
 }
 
-.virtual-table-row tr {
+.virtual-table tbody {
+  display: block;
+}
+
+.virtual-header {
   display: flex;
   width: 100%;
-  height: 100%;
 }
 
 .virtual-row {
+  display: flex;
   border-bottom: 1px solid #f3f4f6;
+  position: absolute;
+  width: 100%;
 }
 
 .virtual-row:hover {
@@ -827,11 +833,15 @@ input[type="number"] {
   color: #dc2626;
 }
 
-.virtual-volume-cell.volume-buy.is-self {
+.virtual-volume-cell.volume-buy.is-self,
+.quantity-buy-cell.is-self,
+.price-buy-cell.is-self {
   background: rgba(34, 197, 94, 0.3);
 }
 
-.virtual-volume-cell.volume-sell.is-self {
+.virtual-volume-cell.volume-sell.is-self,
+.quantity-sell-cell.is-self,
+.price-sell-cell.is-self {
   background: rgba(239, 68, 68, 0.3);
 }
 
@@ -839,8 +849,12 @@ input[type="number"] {
   padding: 4px;
 }
 
-.virtual-row .editable-cell.is-self {
-  background: rgba(59, 130, 246, 0.15);
+.virtual-row .input-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .virtual-row .editable-cell input {
@@ -848,7 +862,7 @@ input[type="number"] {
   font-size: 0.85rem;
 }
 
-/* Submissions Log */
+
 .submissions-log {
   background: #ffffff;
   border: 1px solid var(--border-color);

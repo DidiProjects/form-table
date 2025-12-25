@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo } from 'react';
+import React, { useCallback, useState, memo, forwardRef } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
@@ -122,30 +122,24 @@ const VirtualRow: React.FC<VirtualRowProps> = memo(({ data, style, onSubmission,
   };
 
   return (
-    <div className="virtual-row" style={style}>
-      <FormTableProvider
-        columns={[...buyColumns, ...sellColumns]}
-        initialData={{ buy: data.buyData, sell: data.sellData }}
-        schemas={schemas}
-        onSubmit={onSubmit}
-        debounceMs={300}
-      >
-        <table className="virtual-table-row">
-          <tbody>
-            <tr>
-              <td className="virtual-cell virtual-id">{data.id + 1}</td>
-              <td className="virtual-cell virtual-ticker">{data.ticker}</td>
-              <VolumeCell formId="buy" isSelf={data.isSelfBuy} />
-              <EditableCell formId="buy" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
-              <EditableCell formId="buy" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
-              <EditableCell formId="sell" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
-              <EditableCell formId="sell" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
-              <VolumeCell formId="sell" isSelf={data.isSelfSell} />
-            </tr>
-          </tbody>
-        </table>
-      </FormTableProvider>
-    </div>
+    <FormTableProvider
+      columns={[...buyColumns, ...sellColumns]}
+      initialData={{ buy: data.buyData, sell: data.sellData }}
+      schemas={schemas}
+      onSubmit={onSubmit}
+      debounceMs={300}
+    >
+      <tr className="virtual-row" style={style}>
+        <td className="virtual-cell virtual-id">{data.id + 1}</td>
+        <td className="virtual-cell virtual-ticker">{data.ticker}</td>
+        <VolumeCell formId="buy" isSelf={data.isSelfBuy} />
+        <EditableCell formId="buy" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
+        <EditableCell formId="buy" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
+        <EditableCell formId="sell" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
+        <EditableCell formId="sell" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
+        <VolumeCell formId="sell" isSelf={data.isSelfSell} />
+      </tr>
+    </FormTableProvider>
   );
 });
 
@@ -271,16 +265,19 @@ export const VirtualizedExample: React.FC = () => {
                 <th className="virtual-cell virtual-volume sell-header">Sell Vol</th>
               </tr>
             </thead>
+            <FixedSizeList
+              height={500}
+              itemCount={rows.length}
+              itemSize={56}
+              width="100%"
+              itemData={rows}
+              innerElementType={forwardRef<HTMLTableSectionElement>((props, ref) => (
+                <tbody ref={ref} {...props} />
+              ))}
+            >
+              {Row}
+            </FixedSizeList>
           </table>
-          <FixedSizeList
-            height={500}
-            itemCount={rows.length}
-            itemSize={56}
-            width="100%"
-            itemData={rows}
-          >
-            {Row}
-          </FixedSizeList>
         </div>
         <p className="demo-hint">Tab through fields and press Enter to submit. Last 10 submissions shown above.</p>
       </div>

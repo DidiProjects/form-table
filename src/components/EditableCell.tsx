@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { useField } from '../context/FormTableContext';
 
 interface EditableCellProps {
@@ -30,8 +30,8 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }, [isActive]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const newValue = type === 'number' 
-      ? (e.target.value === '' ? null : Number(e.target.value)) 
+    const newValue = type === 'number'
+      ? (e.target.value === '' ? null : Number(e.target.value))
       : e.target.value;
     setValue(newValue);
   };
@@ -72,7 +72,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     const relatedTarget = e.relatedTarget as HTMLElement | null;
     const targetInstanceId = relatedTarget?.dataset?.instanceid;
     const targetFormId = relatedTarget?.dataset?.formid;
-    
+
     if (targetInstanceId !== instanceId || targetFormId !== formId) {
       resetForm();
     }
@@ -106,21 +106,33 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     );
   }
 
+  const classes = useMemo(() => (
+    [
+      'editable-cell',
+      `${field}-${formId}-cell`,
+      error ? 'has-error' : '',
+      isActive ? 'is-active' : '',
+      isSelf ? 'is-self' : ''
+    ].filter(Boolean).join(' ')
+  ), [error, isActive, isSelf, field, formId]);
+
   return (
-    <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
-      <input
-        ref={inputRef as React.RefObject<HTMLInputElement>}
-        type={type}
-        value={value ?? ''}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        placeholder={placeholder}
-        className="cell-input"
-        {...dataAttrs}
-      />
-      {error && <span className="cell-error">{error}</span>}
+    <td className={classes}>
+      <div className="input-wrapper">
+        <input
+          ref={inputRef as React.RefObject<HTMLInputElement>}
+          type={type}
+          value={value ?? ''}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          className="cell-input"
+          {...dataAttrs}
+        />
+        {error && <span className="cell-error">{error}</span>}
+      </div>
     </td>
   );
 };
