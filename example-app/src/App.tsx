@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../dist/index.css';
+import '@dspackages/form-table/style';
 import './App.css';
 import {
   BasicExample,
