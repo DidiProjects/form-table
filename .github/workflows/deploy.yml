@@ -8,10 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./example-app
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,21 +17,34 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
+        working-directory: ./
 
-      - name: Build project
+      - name: Build form-table package
         run: npm run build
+        working-directory: ./
+
+      - name: Install example-app dependencies
+        run: npm install
+        working-directory: ./example-app
+
+      - name: Build example-app
+        run: npm run build
+        working-directory: ./example-app
 
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
+        working-directory: ./example-app
 
       - name: Link Netlify site
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
+        working-directory: ./example-app
 
       - name: Deploy to Netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         run: netlify deploy --dir=./dist --prod
+        working-directory: ./example-app
