@@ -23,7 +23,7 @@ interface FormTableStore {
   validateFieldSync: (formId: string, field: string) => Promise<boolean>;
   nextField: () => Promise<void>;
   previousField: () => Promise<void>;
-  submit: () => Promise<void>;
+  submit: () => Promise<boolean>;
   reset: (formId?: string) => void;
   subscribe: (listener: Listener) => () => void;
   subscribeNavigation: (listener: Listener) => () => void;
@@ -243,9 +243,9 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
       }
     };
 
-    const submit = async () => {
+    const submit = async (): Promise<boolean> => {
       const { activeField, fields } = navigation;
-      if (!activeField) return;
+      if (!activeField) return false;
 
       const { formId } = parseFieldPath(activeField);
       const formFields = fields.filter(f => f.startsWith(`${formId}.`));
@@ -255,12 +255,12 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
         const isValid = await validateFieldSync(fId, field);
         if (!isValid) {
           setActiveField(fieldPath);
-          return;
+          return false;
         }
       }
 
       const submitHandler = onSubmit[formId];
-      if (!submitHandler) return;
+      if (!submitHandler) return false;
 
       const values: Record<string, any> = {};
       Object.entries(state[formId] || {}).forEach(([fieldName, fieldState]) => {
@@ -270,6 +270,7 @@ export const FormTableProvider: React.FC<FormTableProviderProps> = ({
       submitHandler(values);
       updateInitialData(formId, values);
       reset(formId);
+      return true;
     };
 
     const updateInitialData = (formId: string, values: Record<string, any>) => {

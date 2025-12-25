@@ -135,18 +135,18 @@ const VirtualRow: React.FC<VirtualRowProps> = memo(({ data, style, onSubmission,
           <div className={`virtual-cell-group buy-group ${data.isSelfBuy ? 'is-self' : ''}`}>
             <VolumeCell formId="buy" />
             <div className="virtual-cell virtual-input">
-              <EditableCell formId="buy" field="quantity" type="number" placeholder="0" />
+              <EditableCell formId="buy" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfBuy} />
             </div>
             <div className="virtual-cell virtual-input">
-              <EditableCell formId="buy" field="price" type="number" placeholder="0.00" />
+              <EditableCell formId="buy" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfBuy} />
             </div>
           </div>
           <div className={`virtual-cell-group sell-group ${data.isSelfSell ? 'is-self' : ''}`}>
             <div className="virtual-cell virtual-input">
-              <EditableCell formId="sell" field="price" type="number" placeholder="0.00" />
+              <EditableCell formId="sell" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfSell} />
             </div>
             <div className="virtual-cell virtual-input">
-              <EditableCell formId="sell" field="quantity" type="number" placeholder="0" />
+              <EditableCell formId="sell" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfSell} />
             </div>
             <VolumeCell formId="sell" />
           </div>

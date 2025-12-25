@@ -7,6 +7,7 @@ interface EditableCellProps {
   type?: 'text' | 'number' | 'email' | 'select';
   placeholder?: string;
   options?: { value: string | number; label: string }[];
+  submitOnEnter?: boolean;
 }
 
 export const EditableCell: React.FC<EditableCellProps> = ({
@@ -14,7 +15,8 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   field,
   type = 'text',
   placeholder,
-  options
+  options,
+  submitOnEnter = false
 }) => {
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
   const { value, error, setValue, isActive, setActive, nextField, previousField, submit, resetForm, getWillComplete, markVisited, instanceId } = useField(formId, field);
@@ -44,8 +46,12 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     } else if (e.key === 'Enter') {
       e.preventDefault();
       markVisited();
-      if (getWillComplete()) {
-        submit();
+      if (submitOnEnter || getWillComplete()) {
+        submit().then((success) => {
+          if (success) {
+            inputRef.current?.blur();
+          }
+        });
       } else {
         nextField();
       }
