@@ -8,6 +8,7 @@ interface EditableCellProps {
   placeholder?: string;
   options?: { value: string | number; label: string }[];
   submitOnEnter?: boolean;
+  isSelf?: boolean;
 }
 
 export const EditableCell: React.FC<EditableCellProps> = ({
@@ -16,7 +17,8 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   type = 'text',
   placeholder,
   options,
-  submitOnEnter = false
+  submitOnEnter = false,
+  isSelf = false
 }) => {
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
   const { value, error, setValue, isActive, setActive, nextField, previousField, submit, resetForm, getWillComplete, markVisited, instanceId } = useField(formId, field);
@@ -83,7 +85,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   if (type === 'select' && options) {
     return (
-      <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''}`}>
+      <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
         <select
           ref={inputRef as React.RefObject<HTMLSelectElement>}
           value={value ?? ''}
@@ -105,7 +107,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }
 
   return (
-    <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''}`}>
+    <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
       <input
         ref={inputRef as React.RefObject<HTMLInputElement>}
         type={type}

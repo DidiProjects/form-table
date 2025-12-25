@@ -67,9 +67,10 @@ const schemas: SchemaFactory = (yup) => ({
 
 interface VolumeCellProps {
   formId: 'buy' | 'sell';
+  isSelf?: boolean;
 }
 
-const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
+const VolumeCell: React.FC<VolumeCellProps> = ({ formId, isSelf }) => {
   const volume = useSelectorContext((state) => {
     const qty = state[formId]?.quantity?.value || 0;
     const price = state[formId]?.price?.value || 0;
@@ -77,9 +78,9 @@ const VolumeCell: React.FC<VolumeCellProps> = ({ formId }) => {
   });
 
   return (
-    <div className={`virtual-volume-cell volume-${formId}`}>
+    <td className={`virtual-volume-cell volume-${formId} ${isSelf ? 'is-self' : ''}`}>
       {volume.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-    </div>
+    </td>
   );
 };
 
@@ -129,28 +130,20 @@ const VirtualRow: React.FC<VirtualRowProps> = memo(({ data, style, onSubmission,
         onSubmit={onSubmit}
         debounceMs={300}
       >
-        <div className="virtual-row-inner">
-          <div className="virtual-cell virtual-id">{data.id + 1}</div>
-          <div className="virtual-cell virtual-ticker">{data.ticker}</div>
-          <div className={`virtual-cell-group buy-group ${data.isSelfBuy ? 'is-self' : ''}`}>
-            <VolumeCell formId="buy" />
-            <div className="virtual-cell virtual-input">
-              <EditableCell formId="buy" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfBuy} />
-            </div>
-            <div className="virtual-cell virtual-input">
-              <EditableCell formId="buy" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfBuy} />
-            </div>
-          </div>
-          <div className={`virtual-cell-group sell-group ${data.isSelfSell ? 'is-self' : ''}`}>
-            <div className="virtual-cell virtual-input">
-              <EditableCell formId="sell" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfSell} />
-            </div>
-            <div className="virtual-cell virtual-input">
-              <EditableCell formId="sell" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfSell} />
-            </div>
-            <VolumeCell formId="sell" />
-          </div>
-        </div>
+        <table className="virtual-table-row">
+          <tbody>
+            <tr>
+              <td className="virtual-cell virtual-id">{data.id + 1}</td>
+              <td className="virtual-cell virtual-ticker">{data.ticker}</td>
+              <VolumeCell formId="buy" isSelf={data.isSelfBuy} />
+              <EditableCell formId="buy" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
+              <EditableCell formId="buy" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
+              <EditableCell formId="sell" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
+              <EditableCell formId="sell" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
+              <VolumeCell formId="sell" isSelf={data.isSelfSell} />
+            </tr>
+          </tbody>
+        </table>
       </FormTableProvider>
     </div>
   );
@@ -265,16 +258,20 @@ export const VirtualizedExample: React.FC = () => {
         )}
 
         <div className="virtual-table-container">
-          <div className="virtual-header">
-            <div className="virtual-cell virtual-id">#</div>
-            <div className="virtual-cell virtual-ticker">Ticker</div>
-            <div className="virtual-cell virtual-volume buy-header">Buy Vol</div>
-            <div className="virtual-cell virtual-input buy-header">Qty</div>
-            <div className="virtual-cell virtual-input buy-header">Price</div>
-            <div className="virtual-cell virtual-input sell-header">Price</div>
-            <div className="virtual-cell virtual-input sell-header">Qty</div>
-            <div className="virtual-cell virtual-volume sell-header">Sell Vol</div>
-          </div>
+          <table className="virtual-table">
+            <thead>
+              <tr className="virtual-header">
+                <th className="virtual-cell virtual-id">#</th>
+                <th className="virtual-cell virtual-ticker">Ticker</th>
+                <th className="virtual-cell virtual-volume buy-header">Buy Vol</th>
+                <th className="virtual-cell virtual-input buy-header">Qty</th>
+                <th className="virtual-cell virtual-input buy-header">Price</th>
+                <th className="virtual-cell virtual-input sell-header">Price</th>
+                <th className="virtual-cell virtual-input sell-header">Qty</th>
+                <th className="virtual-cell virtual-volume sell-header">Sell Vol</th>
+              </tr>
+            </thead>
+          </table>
           <FixedSizeList
             height={500}
             itemCount={rows.length}

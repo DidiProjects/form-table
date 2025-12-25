@@ -727,6 +727,10 @@ input[type="number"] {
   color: #374151;
 }
 
+.virtual-header th {
+  font-weight: 600;
+}
+
 .virtual-header .buy-header {
   background: #dcfce7;
   color: #16a34a;
@@ -737,32 +741,28 @@ input[type="number"] {
   color: #dc2626;
 }
 
+.virtual-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.virtual-table-row {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.virtual-table-row tr {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
 .virtual-row {
   border-bottom: 1px solid #f3f4f6;
 }
 
 .virtual-row:hover {
   background: #f9fafb;
-}
-
-.virtual-cell-group {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.virtual-cell-group.buy-group.is-self {
-  background: rgba(34, 197, 94, 0.2);
-}
-
-.virtual-cell-group.sell-group.is-self {
-  background: rgba(239, 68, 68, 0.2);
-}
-
-.virtual-row-inner {
-  display: flex;
-  align-items: center;
-  height: 100%;
 }
 
 .virtual-cell {
@@ -827,8 +827,20 @@ input[type="number"] {
   color: #dc2626;
 }
 
+.virtual-volume-cell.volume-buy.is-self {
+  background: rgba(34, 197, 94, 0.3);
+}
+
+.virtual-volume-cell.volume-sell.is-self {
+  background: rgba(239, 68, 68, 0.3);
+}
+
 .virtual-row .editable-cell {
   padding: 4px;
+}
+
+.virtual-row .editable-cell.is-self {
+  background: rgba(59, 130, 246, 0.15);
 }
 
 .virtual-row .editable-cell input {
