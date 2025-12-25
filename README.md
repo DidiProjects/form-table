@@ -18,6 +18,8 @@ A React form manager for tables with editable cells, keyboard navigation, Yup va
 npm install @dspackages/form-table yup
 ```
 
+> **Important:** `yup` is a peer dependency and must be installed in your project. If you do not install it, your app will fail to compile or run.
+
 ## Basic Usage
 
 ```tsx

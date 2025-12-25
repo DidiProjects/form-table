@@ -1,6 +1,6 @@
 {
   "name": "@dspackages/form-table",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Form manager for tables with editable cells, Tab navigation, Yup validation and context",
   "type": "module",
   "main": "dist/index.js",
@@ -57,7 +57,8 @@
   "homepage": "https://github.com/your-username/your-repo#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -72,6 +73,5 @@
     "vitest": "^4.0.6"
   },
   "dependencies": {
-    "yup": "^1.7.1"
   }
 }
