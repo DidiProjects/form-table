@@ -716,21 +716,6 @@ input[type="number"] {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.virtual-header {
-  display: flex;
-  background: #f9fafb;
-  border-bottom: 1px solid var(--border-color);
-  font-weight: 600;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: #374151;
-}
-
-.virtual-header th {
-  font-weight: 600;
-}
-
 .virtual-header .buy-header {
   background: #dcfce7;
   color: #16a34a;
@@ -743,21 +728,18 @@ input[type="number"] {
 
 .virtual-table {
   width: 100%;
-  border-collapse: collapse;
-  display: block;
-}
-
-.virtual-table thead {
-  display: block;
-}
-
-.virtual-table tbody {
-  display: block;
 }
 
 .virtual-header {
   display: flex;
   width: 100%;
+  background: #f9fafb;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #374151;
 }
 
 .virtual-row {

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo, forwardRef } from 'react';
+import React, { useCallback, useState, memo } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
@@ -78,9 +78,9 @@ const VolumeCell: React.FC<VolumeCellProps> = ({ formId, isSelf }) => {
   });
 
   return (
-    <td className={`virtual-volume-cell volume-${formId} ${isSelf ? 'is-self' : ''}`}>
+    <div className={`virtual-cell virtual-volume-cell volume-${formId} ${isSelf ? 'is-self' : ''}`}>
       {volume.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-    </td>
+    </div>
   );
 };
 
@@ -129,16 +129,16 @@ const VirtualRow: React.FC<VirtualRowProps> = memo(({ data, style, onSubmission,
       onSubmit={onSubmit}
       debounceMs={300}
     >
-      <tr className="virtual-row" style={style}>
-        <td className="virtual-cell virtual-id">{data.id + 1}</td>
-        <td className="virtual-cell virtual-ticker">{data.ticker}</td>
+      <div className="virtual-row" style={style}>
+        <div className="virtual-cell virtual-id">{data.id + 1}</div>
+        <div className="virtual-cell virtual-ticker">{data.ticker}</div>
         <VolumeCell formId="buy" isSelf={data.isSelfBuy} />
         <EditableCell formId="buy" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
         <EditableCell formId="buy" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfBuy} isSelf={data.isSelfBuy} />
         <EditableCell formId="sell" field="price" type="number" placeholder="0.00" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
         <EditableCell formId="sell" field="quantity" type="number" placeholder="0" submitOnEnter={data.isSelfSell} isSelf={data.isSelfSell} />
         <VolumeCell formId="sell" isSelf={data.isSelfSell} />
-      </tr>
+      </div>
     </FormTableProvider>
   );
 });
@@ -252,32 +252,27 @@ export const VirtualizedExample: React.FC = () => {
         )}
 
         <div className="virtual-table-container">
-          <table className="virtual-table">
-            <thead>
-              <tr className="virtual-header">
-                <th className="virtual-cell virtual-id">#</th>
-                <th className="virtual-cell virtual-ticker">Ticker</th>
-                <th className="virtual-cell virtual-volume buy-header">Buy Vol</th>
-                <th className="virtual-cell virtual-input buy-header">Qty</th>
-                <th className="virtual-cell virtual-input buy-header">Price</th>
-                <th className="virtual-cell virtual-input sell-header">Price</th>
-                <th className="virtual-cell virtual-input sell-header">Qty</th>
-                <th className="virtual-cell virtual-volume sell-header">Sell Vol</th>
-              </tr>
-            </thead>
+          <div className="virtual-table">
+            <div className="virtual-header">
+              <div className="virtual-cell virtual-id">#</div>
+              <div className="virtual-cell virtual-ticker">Ticker</div>
+              <div className="virtual-cell virtual-volume buy-header">Buy Vol</div>
+              <div className="virtual-cell virtual-input buy-header">Qty</div>
+              <div className="virtual-cell virtual-input buy-header">Price</div>
+              <div className="virtual-cell virtual-input sell-header">Price</div>
+              <div className="virtual-cell virtual-input sell-header">Qty</div>
+              <div className="virtual-cell virtual-volume sell-header">Sell Vol</div>
+            </div>
             <FixedSizeList
               height={500}
               itemCount={rows.length}
               itemSize={56}
               width="100%"
               itemData={rows}
-              innerElementType={forwardRef<HTMLTableSectionElement>((props, ref) => (
-                <tbody ref={ref} {...props} />
-              ))}
             >
               {Row}
             </FixedSizeList>
-          </table>
+          </div>
         </div>
         <p className="demo-hint">Tab through fields and press Enter to submit. Last 10 submissions shown above.</p>
       </div>

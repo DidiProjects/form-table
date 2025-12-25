@@ -85,7 +85,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   if (type === 'select' && options) {
     return (
-      <td className={`editable-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
+      <div className={`editable-cell virtual-cell ${error ? 'has-error' : ''} ${isActive ? 'is-active' : ''} ${isSelf ? 'is-self' : ''}`}>
         <select
           ref={inputRef as React.RefObject<HTMLSelectElement>}
           value={value ?? ''}
@@ -102,13 +102,14 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           ))}
         </select>
         {error && <span className="cell-error">{error}</span>}
-      </td>
+      </div>
     );
   }
 
   const classes = useMemo(() => (
     [
       'editable-cell',
+      'virtual-cell',
       `${field}-${formId}-cell`,
       error ? 'has-error' : '',
       isActive ? 'is-active' : '',
@@ -117,7 +118,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   ), [error, isActive, isSelf, field, formId]);
 
   return (
-    <td className={classes}>
+    <div className={classes}>
       <div className="input-wrapper">
         <input
           ref={inputRef as React.RefObject<HTMLInputElement>}
@@ -133,6 +134,6 @@ export const EditableCell: React.FC<EditableCellProps> = ({
         />
         {error && <span className="cell-error">{error}</span>}
       </div>
-    </td>
+    </div>
   );
 };
