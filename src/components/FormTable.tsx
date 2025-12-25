@@ -26,16 +26,14 @@ export const FormTable: React.FC<FormTableProps> = ({
       onSubmit={onSubmit}
       debounceMs={debounceMs}
     >
-      <table className="form-table">
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th key={`${col.formId}.${col.field}`}>{col.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
+      <div className="form-table">
+        <div className="form-table-header">
+          {columns.map((col) => (
+            <div key={`${col.formId}.${col.field}`} className="form-table-cell">{col.label}</div>
+          ))}
+        </div>
+        <div className="form-table-body">
+          <div className="form-table-row">
             {columns.map((col) => (
               <EditableCell
                 key={`${col.formId}.${col.field}`}
@@ -46,9 +44,9 @@ export const FormTable: React.FC<FormTableProps> = ({
                 options={col.options}
               />
             ))}
-          </tr>
-        </tbody>
-      </table>
+          </div>
+        </div>
+      </div>
     </FormTableProvider>
   );
 };

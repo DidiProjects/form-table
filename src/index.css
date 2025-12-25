@@ -119,10 +119,17 @@
 }
 
 .form-table-header {
+  display: flex;
   background-color: #f8f9fa;
   border-bottom: 2px solid #dee2e6;
+}
+
+.form-table-header .form-table-cell {
   padding: 12px 8px;
   text-align: left;
+  font-weight: 600;
+  color: #495057;
+}
   font-weight: 600;
   color: #495057;
   position: relative;
@@ -145,6 +152,10 @@
 }
 
 /* Rows */
+.form-table-row {
+  display: flex;
+}
+
 .form-table-row:nth-child(even) {
   background-color: #f8f9fa;
 }
@@ -155,6 +166,7 @@
 
 /* Cells */
 .form-table-cell {
+  flex: 1;
   border-bottom: 1px solid #dee2e6;
   padding: 0;
   position: relative;
