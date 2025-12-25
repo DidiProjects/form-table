@@ -3,13 +3,15 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
 import { CodeBlock } from './CodeBlock';
 
-const TOTAL_ROWS = 1000;
+const TOTAL_ROWS = 2000;
 
 interface RowData {
   id: number;
   ticker: string;
   buyData: { quantity: number; price: number };
   sellData: { quantity: number; price: number };
+  isSelfBuy: boolean;
+  isSelfSell: boolean;
 }
 
 interface SubmissionLog {
@@ -37,6 +39,8 @@ const generateRows = (count: number): RowData[] => {
       quantity: Math.floor(Math.random() * 500) + 10, 
       price: +(Math.random() * 500 + 50).toFixed(2) 
     },
+    isSelfBuy: Math.random() < 0.3,
+    isSelfSell: Math.random() < 0.3,
   }));
 };
 
@@ -128,20 +132,24 @@ const VirtualRow: React.FC<VirtualRowProps> = memo(({ data, style, onSubmission,
         <div className="virtual-row-inner">
           <div className="virtual-cell virtual-id">{data.id + 1}</div>
           <div className="virtual-cell virtual-ticker">{data.ticker}</div>
-          <VolumeCell formId="buy" />
-          <div className="virtual-cell virtual-input">
-            <EditableCell formId="buy" field="quantity" type="number" placeholder="0" />
+          <div className={`virtual-cell-group buy-group ${data.isSelfBuy ? 'is-self' : ''}`}>
+            <VolumeCell formId="buy" />
+            <div className="virtual-cell virtual-input">
+              <EditableCell formId="buy" field="quantity" type="number" placeholder="0" />
+            </div>
+            <div className="virtual-cell virtual-input">
+              <EditableCell formId="buy" field="price" type="number" placeholder="0.00" />
+            </div>
           </div>
-          <div className="virtual-cell virtual-input">
-            <EditableCell formId="buy" field="price" type="number" placeholder="0.00" />
+          <div className={`virtual-cell-group sell-group ${data.isSelfSell ? 'is-self' : ''}`}>
+            <div className="virtual-cell virtual-input">
+              <EditableCell formId="sell" field="price" type="number" placeholder="0.00" />
+            </div>
+            <div className="virtual-cell virtual-input">
+              <EditableCell formId="sell" field="quantity" type="number" placeholder="0" />
+            </div>
+            <VolumeCell formId="sell" />
           </div>
-          <div className="virtual-cell virtual-input">
-            <EditableCell formId="sell" field="price" type="number" placeholder="0.00" />
-          </div>
-          <div className="virtual-cell virtual-input">
-            <EditableCell formId="sell" field="quantity" type="number" placeholder="0" />
-          </div>
-          <VolumeCell formId="sell" />
         </div>
       </FormTableProvider>
     </div>
@@ -210,6 +218,7 @@ export const VirtualizedExample: React.FC = () => {
       return {
         ...row,
         [formId === 'buy' ? 'buyData' : 'sellData']: values,
+        [formId === 'buy' ? 'isSelfBuy' : 'isSelfSell']: true,
       };
     }));
   }, []);
@@ -221,10 +230,11 @@ export const VirtualizedExample: React.FC = () => {
   return (
     <div className="example-section">
       <div className="example-header">
-        <h2>Virtualized Table (1,000 Rows)</h2>
+        <h2>Virtualized Table (2,000 Rows)</h2>
         <p className="example-description">
           Using <code>react-window</code> for virtualization. Only visible rows are rendered,
           enabling smooth performance with thousands of rows. Each row maintains its own form state.
+          Highlighted cells are your orders (30% each side). Editing makes that side yours.
         </p>
       </div>
 
