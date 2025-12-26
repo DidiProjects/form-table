@@ -9,4 +9,4 @@ const publishedVersion = '^2.0.1';
 pkg.dependencies['@dspackages/form-table'] = publishedVersion;
 
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
-console.log(`@dspackages/form-table set to ${publishedVersion} in example-app/package.json`);
+console.log(`@dspackages/form-table set to ${publishedVersion} in example-app/package.json`, pkg.dependencies);

@@ -1,4 +1,7 @@
+
 # FormTable
+
+[Demo: ds-form-table.netlify.app](https://ds-form-table.netlify.app/)
 
 A React form manager for tables with editable cells, keyboard navigation, Yup validation, and context-based state management. Built for performance, flexibility, and modern UI.
 
@@ -25,7 +28,7 @@ npm install @dspackages/form-table yup
 ```tsx
 import React, { useState } from 'react';
 import { FormTableProvider, SchemaFactory } from '@dspackages/form-table';
-import { EditableCellComponent } from 'your-component'
+import { EditableCell } from 'your-component'
 import * as yup from 'yup';
 
 const columns = [
@@ -58,7 +61,7 @@ export default function App() {
         </div>
         <div className="demo-row">
           {columns.map(col => (
-            <EditableCellComponent
+            <EditableCell
               key={col.field}
               formId={col.formId}
               field={col.field}
