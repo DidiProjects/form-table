@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useMemo } from 'react';
-import { useField } from '../context/FormTableContext';
+import { useField } from '@dspackages/form-table';
 
 interface EditableCellProps {
   formId: string;

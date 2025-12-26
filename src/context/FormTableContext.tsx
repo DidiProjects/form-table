@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useCallback, useRef, useSyncExternalStore } from 'react';
 import * as yup from 'yup';
-import { FieldsState, FieldState, FormsState, Column, FormSchemas, SchemaFactory, FormSubmitHandlers } from '../types';
+import { FieldState, FormsState, Column, FormSchemas, SchemaFactory, FormSubmitHandlers } from '../types';
 
 type Listener = () => void;
 

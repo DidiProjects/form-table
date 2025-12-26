@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Column, FormTableProvider, EditableCell, SchemaFactory, useSelectorContext } from '@dspackages/form-table';
+import { Column, FormTableProvider, SchemaFactory, useSelectorContext } from '@dspackages/form-table';
+import { EditableCell } from './EditableCell';
 import { CodeBlock } from './CodeBlock';
 
 const columns: Column[] = [

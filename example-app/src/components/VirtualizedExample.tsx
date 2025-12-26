@@ -1,6 +1,7 @@
 import React, { useCallback, useState, memo } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { Column, FormTableProvider, EditableCell, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
+import { Column, FormTableProvider, SchemaFactory, FormSubmitHandlers, useSelectorContext } from '@dspackages/form-table';
+import { EditableCell } from './EditableCell';
 import { CodeBlock } from './CodeBlock';
 
 const TOTAL_ROWS = 2000;

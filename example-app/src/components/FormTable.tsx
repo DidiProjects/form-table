@@ -1,7 +1,7 @@
 import React from 'react';
-import { FormTableProvider } from '../context/FormTableContext';
+import { FormTableProvider } from '../../../src/context/FormTableContext';
 import { EditableCell } from './EditableCell';
-import { Column, FormSchemas, FormSubmitHandlers } from '../types';
+import { Column, FormSchemas, FormSubmitHandlers } from '../../../src/types';
 
 interface FormTableProps {
   columns: Column[];

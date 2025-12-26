@@ -1,5 +1,6 @@
 import React, { useState, useCallback, memo } from 'react';
-import { Column, FormSubmitHandlers, FormTableProvider, EditableCell, useSelectorContext, SchemaFactory } from '@dspackages/form-table';
+import { Column, FormSubmitHandlers, FormTableProvider, useSelectorContext, SchemaFactory } from '@dspackages/form-table';
+import { EditableCell } from './EditableCell';
 
 type TOrderData = {
   quantity: number;

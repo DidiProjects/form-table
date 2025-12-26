@@ -1,5 +1,6 @@
 import React, { useState, useCallback, memo } from 'react';
-import { Column, FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
+import { Column, FormTableProvider, SchemaFactory } from '@dspackages/form-table';
+import { EditableCell } from './EditableCell';
 import { CodeBlock } from './CodeBlock';
 
 const categoryOptions = [

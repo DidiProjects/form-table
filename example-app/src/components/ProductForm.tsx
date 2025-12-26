@@ -1,5 +1,6 @@
 import React from 'react';
-import { Column, SchemaFactory, FormSubmitHandlers, FormTableProvider, EditableCell } from '@dspackages/form-table';
+import { Column, SchemaFactory, FormSubmitHandlers, FormTableProvider } from '@dspackages/form-table';
+import { EditableCell } from './EditableCell';
 
 type TProductData = {
   name: string;

@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import * as yup from 'yup';
-import { EditableCell } from '../components/EditableCell';
-import { FormTableProvider } from '../context/FormTableContext';
-import { Column, FormSchemas, FormSubmitHandlers } from '../types';
+import { EditableCell } from '../EditableCell';
+import { FormTableProvider } from '@dspackages/form-table';
+import { Column, FormSchemas, FormSubmitHandlers } from '@dspackages/form-table';
 
 const testColumns: Column[] = [
   { formId: 'test', field: 'name', label: 'Name', type: 'text', placeholder: 'Enter name' },
