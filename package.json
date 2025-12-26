@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.esm.json && npm run build:css",
-    "build:css": "cpx2 src/index.css dist/index.css",
+    "build:css": "powershell -Command \"Copy-Item src/index.css dist/index.css\"",
     "prepublishOnly": "npm run validate && npm run build",
     "validate": "npm run test",
     "test": "vitest run",
