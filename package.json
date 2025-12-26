@@ -1,6 +1,6 @@
 {
   "name": "@dspackages/form-table",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Form manager for tables with editable cells, Tab navigation, Yup validation and context",
   "type": "module",
   "main": "dist/index.js",
@@ -35,7 +35,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/your-repo.git"
+    "url": "git+https://github.com/DidiProjects/form-table.git"
   },
   "keywords": [
     "react",
@@ -49,12 +49,12 @@
     "navigation",
     "typescript"
   ],
-  "author": "Your Name",
+  "author": "Diego",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/your-username/your-repo/issues"
+    "url": "https://github.com/DidiProjects/form-table/issues"
   },
-  "homepage": "https://github.com/your-username/your-repo#readme",
+  "homepage": "https://github.com/DidiProjects/form-table#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
