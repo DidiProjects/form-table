@@ -1,6 +1,6 @@
 {
   "name": "@dspackages/form-table",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Form manager for tables with editable cells, Tab navigation, Yup validation and context",
   "type": "module",
   "main": "dist/index.js",
