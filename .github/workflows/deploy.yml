@@ -19,7 +19,7 @@ jobs:
 
       - name: Usar pacote publicado no example-app
         run: |
-          node ../scripts/switch-dep.js
+          node ../scripts/switch-dep.cjs
         working-directory: ./example-app
 
       - name: Install example-app dependencies
