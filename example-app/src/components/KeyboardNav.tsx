@@ -35,7 +35,7 @@ const features = [
   },
 ];
 
-const installCode = `npm install @dspackages/form-table`;
+const installCode = `npm install @dspackages/form-table yup`;
 
 const quickStartCode = `import { 
   FormTableProvider, 
