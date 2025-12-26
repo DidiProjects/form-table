@@ -24,7 +24,8 @@ npm install @dspackages/form-table yup
 
 ```tsx
 import React, { useState } from 'react';
-import { FormTableProvider, EditableCell, SchemaFactory } from '@dspackages/form-table';
+import { FormTableProvider, SchemaFactory } from '@dspackages/form-table';
+import { EditableCellComponent } from 'your-component'
 import * as yup from 'yup';
 
 const columns = [
@@ -57,7 +58,7 @@ export default function App() {
         </div>
         <div className="demo-row">
           {columns.map(col => (
-            <EditableCell
+            <EditableCellComponent
               key={col.field}
               formId={col.formId}
               field={col.field}
@@ -86,22 +87,6 @@ export default function App() {
 - Yup schemas are injected via SchemaFactory
 - Validation runs on blur and change
 - Error messages and error styling are automatic
-
-## Styling
-
-Default styles use flexbox for table layout:
-
-```css
-.demo-table { display: flex; flex-direction: column; }
-.demo-header, .demo-row { display: flex; }
-.demo-cell { flex: 1; padding: 8px; }
-.editable-cell { /* cell styles */ }
-.is-active { /* active cell styles */ }
-.has-error { /* error cell styles */ }
-.is-self { /* self cell styles */ }
-```
-
-You can override or extend these classes in your own CSS.
 
 ## Advanced Usage
 
